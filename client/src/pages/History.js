@@ -32,7 +32,7 @@ const History = () => {
       console.log('Translation history:', translationResponse.data);
       console.log('Quiz history:', quizResponse.data);
       console.log('Quiz history length:', quizResponse.data?.length);
-      
+
       setTranslations(translationResponse.data);
       setQuizzes(quizResponse.data || []);
     } catch (error) {

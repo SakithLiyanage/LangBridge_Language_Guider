@@ -10,7 +10,7 @@ export default function Register() {
     username: '', email: '', password: '', nativeLanguage: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-
+  
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -64,81 +64,81 @@ export default function Register() {
           <p className="text-gray-600 dark:text-gray-400">Join LangBridge and start your language journey!</p>
         </div>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
+            <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                value={formData.username}
-                onChange={handleChange}
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  value={formData.username}
+                  onChange={handleChange}
                 className="input-field pl-10 pr-3 py-2"
                 placeholder="Enter your username"
-              />
+                />
+              </div>
             </div>
-          </div>
-          <div>
+            <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
                 className="input-field pl-10 pr-3 py-2"
-                placeholder="Enter your email"
-              />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
+                  placeholder="Enter your email"
+                />
               </div>
-              <input
-                id="password"
-                name="password"
+            </div>
+            <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
                 type="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
                 className="input-field pl-10 pr-3 py-2"
                 placeholder="Enter your password"
               />
             </div>
           </div>
-          <div>
+            <div>
             <label htmlFor="nativeLanguage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Native Language</label>
-            <input
+                <input
               id="nativeLanguage"
               name="nativeLanguage"
               type="text"
-              required
+                  required
               value={formData.nativeLanguage}
-              onChange={handleChange}
+                  onChange={handleChange}
               className="input-field py-2"
               placeholder="e.g. Sinhala, Tamil, English"
-            />
+                />
           </div>
-          <button
-            type="submit"
-            disabled={isLoading}
+            <button
+              type="submit"
+              disabled={isLoading}
             className="btn-primary w-full flex justify-center items-center gap-2"
-          >
+            >
             {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : <UserPlus className="h-5 w-5" />}
             Sign Up
-          </button>
+            </button>
           <div className="text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Already have an account?{' '}

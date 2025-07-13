@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const Flashcard = require('../models/Flashcard');
+const Progress = require('../models/Progress');
 const mongoose = require('mongoose');
 
 // Helper to safely get ObjectId
 function getUserObjectId(id) {
   if (typeof id === 'string' && id.match(/^[0-9a-fA-F]{24}$/)) {
-    return mongoose.Types.ObjectId(id);
+    return new mongoose.Types.ObjectId(id); // <-- use 'new' here
   }
   return id; // assume already ObjectId
 }
@@ -56,6 +57,26 @@ router.post('/', auth, async (req, res) => {
     console.log('Flashcard object to save:', flashcard);
     await flashcard.save();
     console.log('Flashcard saved successfully:', flashcard._id);
+    
+    // Update progress
+    try {
+      let progress = await Progress.findOne({ userId: req.user.id });
+      if (!progress) {
+        progress = new Progress({ userId: req.user.id });
+      }
+      // Add XP for creating flashcard (15 XP per card)
+      progress.xpPoints = (progress.xpPoints || 0) + 15;
+      progress.currentLevel = progress.xpPoints < 100 ? 'beginner' : progress.xpPoints < 500 ? 'intermediate' : 'advanced';
+      progress.lastActivityDate = new Date();
+      // Increment vocabulary skill
+      progress.skills = progress.skills || {};
+      progress.skills.vocabulary = Math.min(100, (progress.skills.vocabulary || 0) + 10);
+      await progress.save();
+      console.log('Progress updated for flashcard creation');
+    } catch (progressError) {
+      console.log('Progress update failed (non-critical):', progressError.message);
+    }
+    
     res.status(201).json(flashcard);
   } catch (error) {
     console.error('Error creating flashcard:', error);
@@ -164,6 +185,29 @@ router.post('/:id/review', auth, async (req, res) => {
     flashcard.masteryLevel = Math.min(5, Math.floor((goodReviews / recentReviews.length) * 5));
 
     await flashcard.save();
+    
+    // Update progress
+    try {
+      let progress = await Progress.findOne({ userId: req.user.id });
+      if (!progress) {
+        progress = new Progress({ userId: req.user.id });
+      }
+      
+      // Add XP for flashcard review (5 XP per review)
+      progress.xpPoints = (progress.xpPoints || 0) + 5;
+      progress.currentLevel = progress.xpPoints < 100 ? 'beginner' : progress.xpPoints < 500 ? 'intermediate' : 'advanced';
+      progress.lastActivityDate = new Date();
+      
+      // Update vocabulary skill based on review result
+      progress.skills = progress.skills || {};
+      const vocabSkill = result === 'easy' || result === 'good' ? 10 : result === 'hard' ? 5 : 2;
+      progress.skills.vocabulary = Math.min(100, (progress.skills.vocabulary || 0) + vocabSkill);
+      
+      await progress.save();
+    } catch (progressError) {
+      console.log('Progress update failed (non-critical):', progressError.message);
+    }
+    
     res.json(flashcard);
   } catch (error) {
     res.status(500).json({ message: 'Failed to review flashcard', error: error.message });

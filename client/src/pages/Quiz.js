@@ -100,6 +100,13 @@ const Quiz = () => {
           skill: 'reading',
           level: Math.min(100, (correctAnswers / questions.length) * 100)
         });
+        // Fetch latest progress after update
+        if (typeof window !== 'undefined') {
+          // If Progress page is mounted, trigger a refresh (optional: use a global state or event)
+          // Or, just fetch and log for now
+          const progress = await apiClient.get('/api/progress');
+          console.log('Updated progress after quiz:', progress.data);
+        }
       } catch (progressError) {
         console.log('Progress update failed (non-critical):', progressError);
       }

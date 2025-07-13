@@ -7,24 +7,75 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // Generate quiz questions
-const generateQuizQuestions = async (vocabulary, difficulty = 'medium') => {
+const generateQuizQuestions = async (vocabulary, userId, difficulty = 'medium') => {
+  const Quiz = require('../models/Quiz');
+  const User = require('../models/User');
+  const Translation = require('../models/Translation');
+
+  // Fetch user's recent quiz history (last 10 quizzes)
+  const recentQuizzes = await Quiz.find({ userId }).sort({ timestamp: -1 }).limit(10);
+  const recentlyQuizzedWords = new Set();
+  recentQuizzes.forEach(quiz => {
+    if (quiz.answers && Array.isArray(quiz.answers)) {
+      quiz.answers.forEach(ans => {
+        if (ans.word) recentlyQuizzedWords.add(ans.word);
+      });
+    }
+  });
+
+  // Filter vocabulary to exclude recently quizzed words
+  const freshVocab = vocabulary.filter(v => !recentlyQuizzedWords.has(v.word));
+  // Shuffle freshVocab
+  const shuffled = freshVocab.sort(() => Math.random() - 0.5);
+  let selectedVocab = shuffled.slice(0, 7); // Try to get up to 7 from vocab
+
+  // If not enough, fill with words from translation history
+  if (selectedVocab.length < 7) {
+    const user = await User.findById(userId);
+    const translations = await Translation.find({ userId });
+    const translationWords = translations
+      .map(t => ({ word: t.originalText, translation: t.translatedText }))
+      .filter(t => t.word && t.translation && !selectedVocab.some(v => v.word === t.word));
+    // Shuffle and add up to 3
+    const shuffledTrans = translationWords.sort(() => Math.random() - 0.5).slice(0, 3);
+    selectedVocab = selectedVocab.concat(shuffledTrans);
+  }
+
+  // If still not enough, fill with generic fallback questions
+  const genericWords = [
+    { word: 'house', translation: 'house' },
+    { word: 'water', translation: 'water' },
+    { word: 'food', translation: 'food' },
+    { word: 'book', translation: 'book' },
+    { word: 'car', translation: 'car' },
+    { word: 'tree', translation: 'tree' },
+    { word: 'sun', translation: 'sun' },
+    { word: 'moon', translation: 'moon' }
+  ];
+  if (selectedVocab.length < 10) {
+    const needed = 10 - selectedVocab.length;
+    const shuffledGeneric = genericWords.sort(() => Math.random() - 0.5).slice(0, needed);
+    selectedVocab = selectedVocab.concat(shuffledGeneric);
+  }
+  // Limit to 10 questions
+  selectedVocab = selectedVocab.slice(0, 10);
+
   const questions = [];
-  
-  for (let i = 0; i < Math.min(5, vocabulary.length); i++) {
-    const word = vocabulary[i];
+  for (let i = 0; i < selectedVocab.length; i++) {
+    const word = selectedVocab[i];
     const question = {
       id: i + 1,
       question: `What is the English translation of "${word.word}"?`,
       correctAnswer: word.translation,
+      word: word.word,
       options: [
         word.translation,
-        ...generateRandomOptions(word.translation, vocabulary)
+        ...generateRandomOptions(word.translation, vocabulary.concat(genericWords))
       ].sort(() => Math.random() - 0.5),
-      difficulty: word.difficulty
+      difficulty: word.difficulty || 'medium'
     };
     questions.push(question);
   }
-  
   return questions;
 };
 
@@ -58,7 +109,8 @@ router.post('/start', auth, async (req, res) => {
       });
     }
     
-    const questions = await generateQuizQuestions(user.vocabulary, difficulty);
+    // Pass userId to generateQuizQuestions
+    const questions = await generateQuizQuestions(user.vocabulary, req.user.id, difficulty);
     
     res.json({
       quizId: Date.now().toString(),

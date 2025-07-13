@@ -104,18 +104,18 @@ const TranslationInterface = () => {
         });
       } else {
         response = await apiClient.post('/api/translation/translate-guest', {
-          text: sourceText,
-          from: sourceLang,
-          to: targetLang
-        });
+        text: sourceText,
+        from: sourceLang,
+        to: targetLang
+      });
       }
       setTranslatedText(response.data.translatedText);
       if (response.data.saved) {
         toast.success('Translation saved to history!', { duration: 2000 });
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Translation failed');
-      setTranslatedText('');
+        toast.error(error.response?.data?.message || 'Translation failed');
+        setTranslatedText('');
     } finally {
       setIsTranslating(false);
     }

@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Languages, 
-  Mic, 
-  BookOpen, 
-  Award, 
-  ArrowRight, 
+import {
+  Languages,
+  Mic,
+  BookOpen,
+  Award,
+  ArrowRight,
   Sparkles,
   Users,
   TrendingUp,
   Star,
-  CheckCircle
+  CheckCircle,
+  Globe,
+  MessageCircle,
+  BookMarked,
+  Volume2,
+  Flag,
+  Speech,
+  Keyboard,
+  Book,
+  UserCheck
 } from 'lucide-react';
 import TranslationInterface from '../components/TranslationInterface';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,7 +28,19 @@ import ParticleBackground from '../components/ParticleBackground';
 import AnimatedButton from '../components/AnimatedButton';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import ModernHero from '../components/ModernHero';
+// Removed ModernHero import
+import Footer from '../components/Footer';
+
+const languageIcons = [
+  <Languages className="w-10 h-10 text-blue-500" />, // generic
+  <Flag className="w-10 h-10 text-red-500" />, // flag
+  <BookOpen className="w-10 h-10 text-green-500" />, // book
+  <Mic className="w-10 h-10 text-purple-500" />, // mic
+  <MessageCircle className="w-10 h-10 text-yellow-500" />, // chat
+  <Volume2 className="w-10 h-10 text-pink-500" />, // audio
+  <Keyboard className="w-10 h-10 text-indigo-500" />, // typing
+  <Globe className="w-10 h-10 text-blue-400" /> // globe
+];
 
 const Home = () => {
   const { user } = useAuth();
@@ -115,7 +136,7 @@ const Home = () => {
       className="group relative overflow-hidden card-premium p-8 cursor-pointer"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl`} />
-      
+
       <div className="relative z-10">
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
@@ -125,7 +146,7 @@ const Home = () => {
         >
           <Icon className="w-8 h-8 text-white" />
         </motion.div>
-        
+
         <motion.h3
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -134,7 +155,7 @@ const Home = () => {
         >
           {title}
         </motion.h3>
-        
+
         <motion.p
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -144,16 +165,66 @@ const Home = () => {
           {description}
         </motion.p>
       </div>
-      
+
       <div className={`absolute inset-0 bg-gradient-to-r ${color} opacity-0 group-hover:opacity-10 blur-xl transition-all duration-500 rounded-2xl`} />
     </motion.div>
   );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
-      <ModernHero />
-      <ParticleBackground density={40} />
-      
+      {/* HERO SECTION */}
+      <section className="relative py-24 md:py-32 bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 overflow-hidden">
+        <ParticleBackground density={30} />
+        <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none select-none">
+          {/* Language icons as background */}
+          {languageIcons.map((icon, idx) => (
+            <div key={idx} className="m-8 animate-float-slow">
+              {icon}
+            </div>
+          ))}
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 drop-shadow-lg"
+          >
+            Bridge Languages. <span className="text-gradient">Empower Minds.</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-8 max-w-2xl mx-auto"
+          >
+            Learn Sinhala, English, and Tamil with AI-powered translation, interactive lessons, quizzes, and more.
+          </motion.p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+            <AnimatedButton onClick={() => navigate('/register')} variant="primary" size="lg">
+              Get Started Free
+            </AnimatedButton>
+            <Link to="/translate">
+              <AnimatedButton variant="secondary" size="lg">
+                Try Translator <ArrowRight className="inline w-5 h-5 ml-2" />
+              </AnimatedButton>
+            </Link>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            {/* Supported language icons */}
+            <span className="inline-flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-700 dark:text-blue-200 font-semibold text-lg">
+              🇱🇰 Sinhala
+            </span>
+            <span className="inline-flex items-center px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full text-green-700 dark:text-green-200 font-semibold text-lg">
+              🇬🇧 English
+            </span>
+            <span className="inline-flex items-center px-4 py-2 bg-pink-100 dark:bg-pink-900/30 rounded-full text-pink-700 dark:text-pink-200 font-semibold text-lg">
+              🇮🇳 Tamil
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,13 +245,13 @@ const Home = () => {
                     transition={{ delay: index * 0.1 }}
                     className="text-center group"
                   >
-                    <motion.div 
+                    <motion.div
                       className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:shadow-2xl transition-all duration-300"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                     >
                       <stat.icon className="w-8 h-8 text-white" />
                     </motion.div>
-                    <motion.div 
+                    <motion.div
                       className="text-4xl font-bold text-gradient mb-2"
                       whileHover={{ scale: 1.1 }}
                     >
@@ -192,27 +263,6 @@ const Home = () => {
                   </motion.div>
                 ))}
           </div>
-        </div>
-      </section>
-
-      {/* Translation Interface */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-5xl md:text-6xl font-bold mb-6">
-              <span className="text-gradient">Try Our AI Translator</span>
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Experience the power of AI-driven translation with voice recognition, 
-              example generation, and real-time processing
-            </p>
-          </motion.div>
-          
-          <TranslationInterface />
         </div>
       </section>
 
@@ -243,6 +293,84 @@ const Home = () => {
                 delay={index * 0.2}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Translation Interface */}
+      <section className="py-20 bg-gray-50 dark:bg-gray-900 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl md:text-6xl font-bold mb-6">
+              <span className="text-gradient">Try Our AI Translator</span>
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Experience the power of AI-driven translation with voice recognition,
+              example generation, and real-time processing
+            </p>
+          </motion.div>
+
+          <TranslationInterface />
+        </div>
+      </section>
+
+      {/* HOW IT WORKS SECTION */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-100 dark:from-gray-900 dark:to-blue-900">
+        <div className="max-w-5xl mx-auto px-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-5xl font-bold text-center mb-12 text-gradient"
+          >
+            How It Works
+          </motion.h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="flex flex-col items-center text-center">
+              <UserCheck className="w-14 h-14 text-blue-500 mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Sign Up & Choose Language</h3>
+              <p className="text-gray-600 dark:text-gray-300">Create your free account and select your learning language (Sinhala, English, or Tamil).</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <Book className="w-14 h-14 text-green-500 mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Learn & Practice</h3>
+              <p className="text-gray-600 dark:text-gray-300">Access interactive lessons, quizzes, and vocabulary tools. Practice with AI-powered translation and voice features.</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <CheckCircle className="w-14 h-14 text-purple-500 mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Track Progress & Succeed</h3>
+              <p className="text-gray-600 dark:text-gray-300">Monitor your progress, earn achievements, and become fluent step by step!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SUPPORTED LANGUAGES SECTION */}
+      <section className="py-20 bg-white/70 dark:bg-gray-800/70">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-5xl font-bold mb-8 text-gradient"
+          >
+            Supported Languages
+          </motion.h2>
+          <div className="flex flex-wrap justify-center gap-8">
+            <div className="flex flex-col items-center">
+              <span className="text-6xl">🇱🇰</span>
+              <span className="mt-2 text-lg font-semibold">Sinhala</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-6xl">🇬🇧</span>
+              <span className="mt-2 text-lg font-semibold">English</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-6xl">🇮🇳</span>
+              <span className="mt-2 text-lg font-semibold">Tamil</span>
+            </div>
           </div>
         </div>
       </section>
@@ -282,118 +410,66 @@ const Home = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
+      {/* CTA SECTION */}
+      {!user && (
+        <section className="py-20 bg-gradient-to-br from-blue-600 to-purple-600 text-white text-center">
+          <div className="max-w-2xl mx-auto px-4">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Start Your Language Journey?</h2>
+            <p className="text-xl mb-8">Join thousands of learners and unlock new opportunities with Sinhala, English, and Tamil.</p>
+            <AnimatedButton onClick={() => navigate('/register')} variant="light" size="xl">
+              Get Started Free
+            </AnimatedButton>
+          </div>
+        </section>
+      )}
+
+      {/* FAQ SECTION */}
+      <section className="py-20 bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="max-w-3xl mx-auto px-4">
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
+            className="text-4xl md:text-5xl font-bold text-center mb-10 text-gradient"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mb-6">How It Works</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Start translating and learning in just a few steps</p>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="glass-card p-8 flex flex-col items-center text-center"
-            >
-              <Languages className="w-10 h-10 text-blue-600 mb-4" />
-              <h3 className="text-xl font-bold mb-2">1. Choose Language</h3>
-              <p className="text-gray-600 dark:text-gray-400">Select your source and target languages for translation.</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="glass-card p-8 flex flex-col items-center text-center"
-            >
-              <Mic className="w-10 h-10 text-green-600 mb-4" />
-              <h3 className="text-xl font-bold mb-2">2. Speak or Type</h3>
-              <p className="text-gray-600 dark:text-gray-400">Enter your text or use voice input for instant translation.</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="glass-card p-8 flex flex-col items-center text-center"
-            >
-              <Sparkles className="w-10 h-10 text-purple-600 mb-4" />
-              <h3 className="text-xl font-bold mb-2">3. Get Results</h3>
-              <p className="text-gray-600 dark:text-gray-400">See your translation, listen to audio, and get example sentences.</p>
-            </motion.div>
+            Frequently Asked Questions
+          </motion.h2>
+          <div className="space-y-4">
+            {[{
+              q: 'Is LangBridge free to use?',
+              a: 'Yes! You can get started and use most features for free. Premium features may be added in the future.'
+            }, {
+              q: 'Which languages are supported?',
+              a: 'Sinhala, English, and Tamil are fully supported. More languages may be added soon.'
+            }, {
+              q: 'Can I use LangBridge on mobile?',
+              a: 'Yes, the web app is mobile-friendly and a mobile app is coming soon.'
+            }, {
+              q: 'How do I track my progress?',
+              a: 'Your dashboard shows your XP, achievements, and learning streaks.'
+            }].map((item, idx) => (
+              <details key={idx} className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 group">
+                <summary className="font-semibold text-lg cursor-pointer group-open:text-blue-600 transition-colors">{item.q}</summary>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">{item.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      {!user && (
-        <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-green-500 relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/10"></div>
-          
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-            >
-              <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                Ready to Start Your Language Journey?
-              </h2>
-              <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto">
-                Join thousands of learners improving their language skills with LangBridge. 
-                Start your free account today!
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <AnimatedButton
-                  onClick={() => navigate('/register')}
-                  variant="white"
-                  size="xl"
-                  icon={ArrowRight}
-                  iconPosition="right"
-                  className="bg-white text-blue-600 hover:bg-gray-100 shadow-2xl"
-                >
-                  Create Free Account
-                </AnimatedButton>
-                
-                <AnimatedButton
-                  onClick={() => navigate('/login')}
-                  variant="outline"
-                  size="xl"
-                  className="border-2 border-white text-white hover:bg-white/10"
-                >
-                  Sign In
-                </AnimatedButton>
-              </div>
-            </motion.div>
-          </div>
-          
-          {/* Floating elements */}
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(10)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-white/30 rounded-full"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0.3, 0.8, 0.3],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                }}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* NEWSLETTER SIGNUP SECTION */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-purple-100 dark:from-gray-900 dark:to-blue-900">
+        <div className="max-w-xl mx-auto px-4 text-center">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gradient">Stay Updated!</h3>
+          <p className="mb-6 text-gray-600 dark:text-gray-300">Get language tips, updates, and special offers straight to your inbox.</p>
+          <form className="flex flex-col sm:flex-row gap-4 justify-center">
+            <input type="email" placeholder="Your email address" className="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 flex-1" />
+            <button type="submit" className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Subscribe</button>
+          </form>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <Footer />
     </div>
   );
 };

@@ -6,6 +6,7 @@ const path = require('path');
 const User = require('./models/User');
 const Translation = require('./models/Translation');
 const Quiz = require('./models/Quiz');
+const Progress = require('./models/Progress');
 
 const authRoutes = require('./routes/auth');
 const translationRoutes = require('./routes/translation');

@@ -23,23 +23,7 @@ const Progress = () => {
       setProgress(response.data);
     } catch (error) {
       console.error('Failed to fetch progress:', error);
-      // Set default progress data to prevent errors
-      setProgress({
-        xpPoints: 0,
-        streakDays: 0,
-        currentLevel: 'beginner',
-        achievements: [],
-        courseProgress: {},
-        goals: {
-          dailyTarget: 30,
-          weeklyTarget: 210,
-          vocabularyTarget: 100,
-          currentDailyProgress: 0,
-          currentWeeklyProgress: 0,
-          currentVocabularyProgress: 0
-        },
-        skills: {}
-      });
+      setProgress(null); // Only set to null, do not use dummy data
     }
   };
 
@@ -56,7 +40,6 @@ const Progress = () => {
       }
     } catch (error) {
       console.error('Failed to fetch achievements:', error);
-      // Set default achievements data
       setAchievements({ earned: [], available: [], new: [] });
     }
   };
@@ -89,7 +72,7 @@ const Progress = () => {
     return 'text-red-600';
   };
 
-  if (loading) {
+  if (loading || !progress) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

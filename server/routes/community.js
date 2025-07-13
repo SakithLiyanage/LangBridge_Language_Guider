@@ -54,6 +54,19 @@ router.post('/posts', auth, async (req, res) => {
     console.log('Post saved successfully');
     await post.populate('author', 'username');
     
+    // Award XP and update progress
+    try {
+      const Progress = require('../models/Progress');
+      let progress = await Progress.findOne({ userId: req.user.id });
+      if (!progress) progress = new Progress({ userId: req.user.id });
+      progress.xpPoints = (progress.xpPoints || 0) + 10;
+      progress.skills = progress.skills || {};
+      progress.skills.community = Math.min(100, (progress.skills.community || 0) + 10);
+      progress.lastActivityDate = new Date();
+      await progress.save();
+    } catch (progressError) {
+      console.log('Progress update failed (community post):', progressError.message);
+    }
     res.status(201).json(post);
   } catch (error) {
     console.error('Error creating post:', error);
@@ -101,6 +114,19 @@ router.post('/posts/:id/reply', auth, async (req, res) => {
     await post.save();
     await post.populate('replies.author', 'username');
     
+    // Award XP and update progress
+    try {
+      const Progress = require('../models/Progress');
+      let progress = await Progress.findOne({ userId: req.user.id });
+      if (!progress) progress = new Progress({ userId: req.user.id });
+      progress.xpPoints = (progress.xpPoints || 0) + 5;
+      progress.skills = progress.skills || {};
+      progress.skills.community = Math.min(100, (progress.skills.community || 0) + 5);
+      progress.lastActivityDate = new Date();
+      await progress.save();
+    } catch (progressError) {
+      console.log('Progress update failed (community reply):', progressError.message);
+    }
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: 'Failed to add reply', error: error.message });
@@ -184,6 +210,19 @@ router.post('/resources', auth, async (req, res) => {
     console.log('Resource saved successfully');
     await resource.populate('author', 'username');
     
+    // Award XP and update progress
+    try {
+      const Progress = require('../models/Progress');
+      let progress = await Progress.findOne({ userId: req.user.id });
+      if (!progress) progress = new Progress({ userId: req.user.id });
+      progress.xpPoints = (progress.xpPoints || 0) + 15;
+      progress.skills = progress.skills || {};
+      progress.skills.community = Math.min(100, (progress.skills.community || 0) + 15);
+      progress.lastActivityDate = new Date();
+      await progress.save();
+    } catch (progressError) {
+      console.log('Progress update failed (community resource):', progressError.message);
+    }
     res.status(201).json(resource);
   } catch (error) {
     console.error('Error creating resource:', error);

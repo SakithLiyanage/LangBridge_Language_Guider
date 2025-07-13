@@ -3,6 +3,7 @@ const axios = require('axios');
 const auth = require('../middleware/auth');
 const Translation = require('../models/Translation');
 const User = require('../models/User');
+const Progress = require('../models/Progress');
 const stream = require('stream');
 
 const router = express.Router();
@@ -78,6 +79,19 @@ router.post('/translate', auth, async (req, res) => {
       });
       
       await translation.save();
+      
+      // Update progress
+      let progress = await Progress.findOne({ userId: req.user.id });
+      if (!progress) {
+        progress = new Progress({ userId: req.user.id });
+      }
+      
+      // Add XP for translation
+      progress.xpPoints = (progress.xpPoints || 0) + 10;
+      progress.currentLevel = progress.xpPoints < 100 ? 'beginner' : progress.xpPoints < 500 ? 'intermediate' : 'advanced';
+      progress.lastActivityDate = new Date();
+      
+      await progress.save();
     } catch (saveError) {
       console.error('Error saving translation:', saveError);
     }

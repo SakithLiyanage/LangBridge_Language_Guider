@@ -30,6 +30,7 @@ import AnimatedButton from './AnimatedButton';
 const primaryNavItems = [
   { path: '/', label: 'Home', icon: Home, description: 'Dashboard overview' },
   { path: '/translate', label: 'Translate', icon: MessageCircle, description: 'AI translation tool' },
+  { path: '/learn', label: 'Learn', icon: BookOpen, description: 'Interactive courses' },
   { path: '/quiz', label: 'Quiz', icon: Award, description: 'Test your knowledge' }
 ];
 
@@ -77,27 +78,24 @@ const Navbar = () => {
 
   const NavItem = ({ item, onClick, className = "", showDescription = true }) => {
     const Icon = item.icon;
+    const isActive = isActivePath(item.path);
+    
     return (
       <Link
         to={item.path}
         onClick={onClick}
-        className={`group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 relative ${
-          isActivePath(item.path)
-            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-            : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400'
+        className={`group relative flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+          isActive
+            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+            : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
         } ${className}`}
       >
-        <Icon className="w-5 h-5" />
-        <div className="flex flex-col">
-          <span className="font-medium text-sm">{item.label}</span>
-          {showDescription && (
-            <span className="text-xs opacity-75">{item.description}</span>
-          )}
-        </div>
-        {isActivePath(item.path) && (
+        <Icon className="w-4 h-4" />
+        <span className="text-sm font-medium">{item.label}</span>
+        {isActive && (
           <motion.div
             layoutId="navbar-active"
-            className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl -z-10"
+            className="absolute inset-0 bg-blue-100 dark:bg-blue-900/30 rounded-lg -z-10"
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
           />
         )}
@@ -112,7 +110,7 @@ const Navbar = () => {
           initial={{ opacity: 0, scale: 0.95, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
-          className={`absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 py-2 ${className}`}
+          className={`absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 py-2 ${className}`}
         >
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h3>
@@ -137,26 +135,19 @@ const Navbar = () => {
   return (
     <nav className={`sticky top-0 z-50 transition-all duration-300 ${
       scrolled 
-        ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 shadow-lg' 
+        ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 shadow-sm' 
         : 'bg-white dark:bg-gray-900'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300"
-            >
-              <Languages className="w-6 h-6 text-white" />
-            </motion.div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                LangBridge
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">Learn Smart</span>
-            </div>
+          <Link to="/" className="flex items-center group">
+            <img
+              src="/logo.png"
+              alt="LangBridge Logo"
+              className="h-32 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              style={{ maxHeight: '8rem' }}
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -174,15 +165,15 @@ const Navbar = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowLearningMenu(!showLearningMenu)}
-                  className={`flex items-center space-x-2 px-4 py-3 rounded-xl transition-all duration-300 ${
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
                     showLearningMenu
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400'
+                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                   }`}
                 >
-                  <GraduationCap className="w-5 h-5" />
-                  <span className="font-medium text-sm">Learning</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                  <GraduationCap className="w-4 h-4" />
+                  <span className="text-sm font-medium">Learning</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${
                     showLearningMenu ? 'rotate-180' : ''
                   }`} />
                 </motion.button>
@@ -204,15 +195,15 @@ const Navbar = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowCommunityMenu(!showCommunityMenu)}
-                  className={`flex items-center space-x-2 px-4 py-3 rounded-xl transition-all duration-300 ${
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
                     showCommunityMenu
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400'
+                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                   }`}
                 >
-                  <Users className="w-5 h-5" />
-                  <span className="font-medium text-sm">Community</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                  <Users className="w-4 h-4" />
+                  <span className="text-sm font-medium">Community</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${
                     showCommunityMenu ? 'rotate-180' : ''
                   }`} />
                 </motion.button>
@@ -221,28 +212,20 @@ const Navbar = () => {
                   isOpen={showCommunityMenu}
                   onClose={() => setShowCommunityMenu(false)}
                   title="Community"
-                  subtitle="Connect with fellow learners"
+                  subtitle="Connect with other learners"
                   items={communityNavItems}
                 />
               </div>
             )}
-          </div>
 
-          {/* Right Side Controls */}
-          <div className="flex items-center space-x-2">
             {/* Theme Toggle */}
             <motion.button
-              whileHover={{ scale: 1.1, rotate: 180 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
-              className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200"
             >
-              {isDark ? (
-                <Sun className="w-5 h-5 text-yellow-500" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-              )}
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </motion.button>
 
             {/* User Menu */}
@@ -252,16 +235,10 @@ const Navbar = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                    {user.profilePicture ? (
-                      <img src={user.profilePicture} alt="Profile" className="w-8 h-8 rounded-lg object-cover" />
-                    ) : (
-                      <span className="text-white font-bold text-sm">
-                        {user.username.charAt(0).toUpperCase()}
-                      </span>
-                    )}
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                    {user.username.charAt(0).toUpperCase()}
                   </div>
                   <div className="hidden sm:block text-left">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -279,7 +256,7 @@ const Navbar = () => {
                       initial={{ opacity: 0, scale: 0.95, y: -10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                      className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 py-2"
+                      className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 py-2"
                     >
                       <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -296,7 +273,7 @@ const Navbar = () => {
                       
                       <Link
                         to="/dashboard"
-                        className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
                         <User className="w-4 h-4" />
@@ -309,7 +286,7 @@ const Navbar = () => {
                       <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
                         <button
                           onClick={handleLogout}
-                          className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left text-red-600 dark:text-red-400"
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left text-red-600 dark:text-red-400"
                         >
                           <LogOut className="w-4 h-4" />
                           <div>
@@ -345,16 +322,16 @@ const Navbar = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
             >
               <motion.div
                 animate={{ rotate: isOpen ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
                 {isOpen ? (
-                  <X className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+                  <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 ) : (
-                  <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+                  <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 )}
               </motion.div>
             </motion.button>
@@ -371,11 +348,11 @@ const Navbar = () => {
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
           >
-            <div className="px-4 py-6 space-y-6">
+            <div className="px-4 py-4 space-y-4">
               {/* Primary Navigation */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">Main</h3>
-                <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">Main</h3>
+                <div className="space-y-1">
                   {primaryNavItems.map((item) => {
                     if (item.protected && !user) return null;
                     return (
@@ -393,8 +370,8 @@ const Navbar = () => {
               {/* Learning Tools */}
               {user && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">Learning Tools</h3>
-                  <div className="space-y-2">
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">Learning Tools</h3>
+                  <div className="space-y-1">
                     {learningNavItems.map((item) => (
                       <NavItem 
                         key={item.path} 
@@ -410,8 +387,8 @@ const Navbar = () => {
               {/* Community */}
               {user && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 px-2">Community</h3>
-                  <div className="space-y-2">
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">Community</h3>
+                  <div className="space-y-1">
                     {communityNavItems.map((item) => (
                       <NavItem 
                         key={item.path} 
@@ -430,7 +407,7 @@ const Navbar = () => {
                   <Link
                     to="/login"
                     onClick={() => setIsOpen(false)}
-                    className="block w-full text-center py-3 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                    className="block w-full text-center py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
                   >
                     Sign In
                   </Link>
@@ -451,8 +428,6 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-
     </nav>
   );
 };
