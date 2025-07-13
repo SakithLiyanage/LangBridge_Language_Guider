@@ -1,14 +1,33 @@
 # Language Translator & Bilingual Learning Hub
 
-A modern, full-stack web app for mastering Sinhala and English, powered by AI translation, interactive courses, quizzes, vocabulary management, audio, and cultural learning.
+A modern, full-stack web app for mastering Sinhala, English, and Tamil, powered by AI translation, interactive courses, quizzes, vocabulary management, audio, and cultural learning.
 
 ## 🌟 Features
 
+### Comprehensive Multilingual Learning
+- **Full Interactive Syllabuses:**
+  - Complete, step-based courses for Sinhala, English, and Tamil
+  - Each language includes:
+    - Alphabet (letters, pronunciation, tracing)
+    - Basic Words & Phrases
+    - Basic Grammar
+    - Speaking Test (pronunciation practice)
+    - Interactive Activities (matching, fill-in-the-blank, drag-and-drop, listening)
+    - Advanced Vocabulary (with examples and activities)
+    - Conversation Practice (real dialogues, role-play)
+    - Reading Comprehension (passages, stories, questions)
+    - Writing Practice (guided prompts, examples, tips)
+    - Cultural Context (traditions, festivals, honorifics, idioms)
+    - Advanced Grammar (complex structures, passive, reported speech)
+    - Literature & Poetry (classical and modern works)
+- **Multi-language Support:**
+  - Seamless switching and learning for Sinhala, English, and Tamil
+  - All modules and activities are available for each language
+
 ### Core Learning & Translation
 - **Bilingual Learning Hub:**
-  - Interactive step-based courses for Sinhala (in English) and English (in Sinhala)
-  - Learn alphabet, vocabulary, grammar, speaking, and culture
-  - Activities: matching, fill-in-the-blank, listening, and more
+  - Interactive, visually aligned UI for all languages
+  - Modern, responsive design with clear progress indicators
 - **AI-Powered Translation:**
   - Translate instantly between Sinhala, English, and Tamil
   - Voice input and audio output for natural practice
@@ -70,6 +89,17 @@ A modern, full-stack web app for mastering Sinhala and English, powered by AI tr
   - High contrast mode
   - Screen reader support
   - Responsive design for all devices
+
+## 📚 Course Structure Overview
+
+Each language (Sinhala, English, Tamil) includes:
+- **Alphabet**: Learn letters, sounds, and tracing
+- **Basic Words & Grammar**: Build foundational vocabulary and grammar
+- **Speaking & Listening**: Practice pronunciation and comprehension
+- **Interactive Activities**: Matching, fill-in-the-blank, drag-and-drop, listening
+- **Advanced Modules**: Vocabulary, conversation, reading, writing, culture, grammar, literature
+- **Cultural Context**: Learn about traditions, festivals, and real-world usage
+- **Progress Tracking**: Visual indicators and XP for every step
 
 ## 🚀 Tech Stack
 - **Frontend:** React, Tailwind CSS, Framer Motion, React Router
