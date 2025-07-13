@@ -15,6 +15,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 import apiClient from './utils/axios';
 import About from './pages/About';
 import Learn from './pages/LearnSinhala';
+import Progress from './pages/Progress';
+import Flashcards from './pages/Flashcards';
+import Community from './pages/Community';
+import TestAPI from './pages/TestAPI';
+import Translate from './pages/Translate';
 
 function App() {
   return (
@@ -46,6 +51,23 @@ function App() {
                 } />
                 <Route path="/about" element={<About />} />
                 <Route path="/learn" element={<Learn />} />
+                <Route path="/translate" element={<Translate />} />
+                <Route path="/progress" element={
+                  <ProtectedRoute>
+                    <Progress />
+                  </ProtectedRoute>
+                } />
+                <Route path="/flashcards" element={
+                  <ProtectedRoute>
+                    <Flashcards />
+                  </ProtectedRoute>
+                } />
+                <Route path="/community" element={
+                  <ProtectedRoute>
+                    <Community />
+                  </ProtectedRoute>
+                } />
+                <Route path="/test" element={<TestAPI />} />
               </Routes>
             </main>
             <Toaster 

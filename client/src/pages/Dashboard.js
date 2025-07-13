@@ -15,6 +15,7 @@ const Dashboard = () => {
     vocabularyCount: 0,
     totalCorrect: 0 // New stat
   });
+  const [progress, setProgress] = useState(null);
   const [recentTranslations, setRecentTranslations] = useState([]);
   const [recentQuizzes, setRecentQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +24,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchDashboardData();
     fetchVocabulary();
+    fetchProgress();
   }, []);
 
   const fetchDashboardData = async () => {
@@ -74,6 +76,15 @@ const Dashboard = () => {
     } catch (error) {
       setVocabulary([]);
       setStats((prev) => ({ ...prev, vocabularyCount: 0 }));
+    }
+  };
+
+  const fetchProgress = async () => {
+    try {
+      const response = await apiClient.get('/api/progress');
+      setProgress(response.data);
+    } catch (error) {
+      console.error('Failed to fetch progress:', error);
     }
   };
 
@@ -162,6 +173,33 @@ const Dashboard = () => {
             color="bg-pink-100 dark:bg-pink-900"
           />
         </div>
+
+        {/* Progress Overview */}
+        {progress && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Learning Progress
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{progress.xpPoints}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">XP Points</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{progress.streakDays}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Day Streak</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600 capitalize">{progress.currentLevel}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Level</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">{progress.achievements.length}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Achievements</div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Vocabulary List */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">

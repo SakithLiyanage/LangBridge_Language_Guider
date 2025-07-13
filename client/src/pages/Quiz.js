@@ -74,17 +74,42 @@ const Quiz = () => {
 
   const finishQuiz = async (finalAnswers) => {
     try {
-      await apiClient.post('/api/quiz/submit', {
+      const correctAnswers = finalAnswers.filter(a => a.correct).length;
+      const xpGained = Math.round((correctAnswers / questions.length) * 20); // 20 XP for perfect score
+      
+      console.log('Submitting quiz with data:', {
         quizId: Date.now().toString(),
         answers: finalAnswers,
-        score: finalAnswers.filter(a => a.correct).length,
+        score: correctAnswers,
         totalQuestions: questions.length
       });
       
+      const quizResponse = await apiClient.post('/api/quiz/submit', {
+        quizId: Date.now().toString(),
+        answers: finalAnswers,
+        score: correctAnswers,
+        totalQuestions: questions.length
+      });
+
+      console.log('Quiz submission response:', quizResponse.data);
+
+      // Update progress with XP gained (optional - don't fail if this fails)
+      try {
+        await apiClient.post('/api/progress/update', {
+          xpGained,
+          skill: 'reading',
+          level: Math.min(100, (correctAnswers / questions.length) * 100)
+        });
+      } catch (progressError) {
+        console.log('Progress update failed (non-critical):', progressError);
+      }
+      
       setQuizState('finished');
-      toast.success('Quiz completed!');
+      toast.success(`Quiz completed! You earned ${xpGained} XP!`);
     } catch (error) {
-      toast.error('Failed to submit quiz');
+      console.error('Quiz submission error:', error);
+      console.error('Error response:', error.response?.data);
+      toast.error(error.response?.data?.message || 'Failed to submit quiz');
     }
   };
 

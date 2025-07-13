@@ -23,14 +23,21 @@ const History = () => {
 
   const fetchHistory = async () => {
     try {
+      console.log('Fetching history data...');
       const [translationResponse, quizResponse] = await Promise.all([
         apiClient.get('/api/translation/history'),
         apiClient.get('/api/quiz/history')
       ]);
 
+      console.log('Translation history:', translationResponse.data);
+      console.log('Quiz history:', quizResponse.data);
+      console.log('Quiz history length:', quizResponse.data?.length);
+      
       setTranslations(translationResponse.data);
-      setQuizzes(quizResponse.data);
+      setQuizzes(quizResponse.data || []);
     } catch (error) {
+      console.error('Error fetching history:', error);
+      console.error('Error details:', error.response?.data);
       toast.error('Failed to fetch history');
     } finally {
       setLoading(false);
@@ -262,6 +269,7 @@ const History = () => {
           </div>
         ) : (
           <div className="space-y-4">
+            {console.log('Filtered quizzes:', filteredQuizzes)}
             {filteredQuizzes.length > 0 ? (
               filteredQuizzes.map((quiz, index) => (
                 <motion.div
@@ -349,7 +357,7 @@ const History = () => {
                       {ans.correct ? <span className="text-green-600">✔</span> : <span className="text-red-600">✘</span>}
                     </div>
                     <div className="text-sm mt-1">
-                      <div><b>Your answer:</b> {ans.selectedAnswer}</div>
+                      <div><b>Your answer:</b> {ans.selectedAnswer || ans.userAnswer}</div>
                       <div><b>Correct answer:</b> {ans.correctAnswer}</div>
                     </div>
                   </div>

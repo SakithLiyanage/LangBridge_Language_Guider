@@ -24,6 +24,31 @@ const userSchema = new mongoose.Schema({
     enum: ['sinhala', 'tamil', 'english'],
     default: 'sinhala'
   },
+  // Progress tracking fields
+  xpPoints: {
+    type: Number,
+    default: 0
+  },
+  streakDays: {
+    type: Number,
+    default: 0
+  },
+  lastActivityDate: {
+    type: Date,
+    default: Date.now
+  },
+  currentLevel: {
+    type: String,
+    enum: ['beginner', 'intermediate', 'advanced'],
+    default: 'beginner'
+  },
+  achievements: [{
+    id: String,
+    name: String,
+    description: String,
+    icon: String,
+    earnedAt: { type: Date, default: Date.now }
+  }],
   translationHistory: [{
     originalText: String,
     translatedText: String,

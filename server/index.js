@@ -5,11 +5,15 @@ require('dotenv').config();
 const path = require('path');
 const User = require('./models/User');
 const Translation = require('./models/Translation');
+const Quiz = require('./models/Quiz');
 
 const authRoutes = require('./routes/auth');
 const translationRoutes = require('./routes/translation');
 const quizRoutes = require('./routes/quiz');
 const voiceRoutes = require('./routes/voice');
+const progressRoutes = require('./routes/progress');
+const flashcardRoutes = require('./routes/flashcards');
+const communityRoutes = require('./routes/community');
 
 const app = express();
 
@@ -31,6 +35,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/translation', translationRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/voice', voiceRoutes);
+app.use('/api/progress', progressRoutes);
+app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/community', communityRoutes);
 
 // Stats endpoint for frontend
 app.get('/api/stats', async (req, res) => {

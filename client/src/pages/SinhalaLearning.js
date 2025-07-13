@@ -222,7 +222,6 @@ const SinhalaLearning = () => {
           <ChevronRight className="w-5 h-5 text-gray-400" />
         </div>
       </div>
-      
       <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
         {lesson.title}
       </h3>

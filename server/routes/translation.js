@@ -70,7 +70,7 @@ router.post('/translate', auth, async (req, res) => {
     // Save to history for authenticated users
     try {
       const translation = new Translation({
-        userId: req.userId,
+        userId: req.user.id,
         originalText: text,
         translatedText,
         fromLang: from,
@@ -95,10 +95,13 @@ router.post('/translate', auth, async (req, res) => {
 // Get translation history
 router.get('/history', auth, async (req, res) => {
   try {
-    const translations = await Translation.find({ userId: req.userId })
+    console.log('Fetching translation history for user:', req.user.id);
+    
+    const translations = await Translation.find({ userId: req.user.id })
       .sort({ timestamp: -1 })
       .limit(50);
     
+    console.log('Found translations:', translations.length);
     res.json(translations);
   } catch (error) {
     console.error('Error fetching translation history:', error);
@@ -190,9 +193,9 @@ router.post('/vocabulary', auth, async (req, res) => {
     if (!word || !translation || !language) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
-      console.error('User not found for userId:', req.userId);
+      console.error('User not found for userId:', req.user.id);
       return res.status(404).json({ message: 'User not found' });
     }
     // Prevent duplicates
@@ -211,9 +214,9 @@ router.post('/vocabulary', auth, async (req, res) => {
 // Get user vocabulary (auth required)
 router.get('/vocabulary', auth, async (req, res) => {
   try {
-    const userDoc = await User.findById(req.userId);
+    const userDoc = await User.findById(req.user.id);
     if (!userDoc) {
-      console.error('User not found for userId:', req.userId);
+      console.error('User not found for userId:', req.user.id);
       return res.status(404).json({ message: 'User not found' });
     }
     res.json({ vocabulary: userDoc.vocabulary });
@@ -230,9 +233,9 @@ router.delete('/vocabulary', auth, async (req, res) => {
     if (!word || !language) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    const userDoc = await User.findById(req.userId);
+    const userDoc = await User.findById(req.user.id);
     if (!userDoc) {
-      console.error('User not found for userId:', req.userId);
+      console.error('User not found for userId:', req.user.id);
       return res.status(404).json({ message: 'User not found' });
     }
     userDoc.vocabulary = userDoc.vocabulary.filter(v => !(v.word === word && v.language === language));

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2, CheckCircle, Mic, MicOff, ArrowRight, BookOpen, Star, ChevronRight } from 'lucide-react';
+import apiClient from '../utils/axios';
+import toast from 'react-hot-toast';
 
 // Full Sinhala alphabet: 18 vowels, 41 consonants
 const sinhalaVowels = [
@@ -360,6 +362,27 @@ export default function Learn() {
   const checkTranslate = () => {
     setShowFeedback(true);
     setActivityResult(translateInput.trim() === advancedActivities[2].answer);
+    if (translateInput.trim() === advancedActivities[2].answer) {
+      updateProgress('advanced', 'sinhala');
+    }
+  };
+
+  const updateProgress = async (lessonType, language) => {
+    try {
+      const xpGained = 10; // Base XP for completing a lesson
+      await apiClient.post('/api/progress/update', {
+        xpGained,
+        lessonCompleted: {
+          language,
+          lessonId: `${language}_${lessonType}`
+        },
+        skill: 'reading',
+        level: 25 // Increment skill level
+      });
+      toast.success(`Lesson completed! +${xpGained} XP`);
+    } catch (error) {
+      console.error('Failed to update progress:', error);
+    }
   };
 
   // Tab panel for language selection
