@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -20,12 +20,14 @@ import Flashcards from './pages/Flashcards';
 import Community from './pages/Community';
 import TestAPI from './pages/TestAPI';
 import Translate from './pages/Translate';
+import AITutor from './pages/AITutor';
+import AITutorFloatingButton from './components/AITutorFloatingButton';
 
 function App() {
+  const location = useLocation();
   return (
     <AuthProvider>
       <ThemeProvider>
-        <Router>
           <div className="App min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
             <Navbar />
             <main>
@@ -68,8 +70,10 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/test" element={<TestAPI />} />
+                <Route path="/ai-tutor" element={<AITutor />} />
               </Routes>
             </main>
+            {location.pathname !== '/ai-tutor' && <AITutorFloatingButton />}
             <Toaster 
               position="top-right"
               toastOptions={{
@@ -81,7 +85,6 @@ function App() {
               }}
             />
           </div>
-        </Router>
       </ThemeProvider>
     </AuthProvider>
   );

@@ -15,6 +15,7 @@ const voiceRoutes = require('./routes/voice');
 const progressRoutes = require('./routes/progress');
 const flashcardRoutes = require('./routes/flashcards');
 const communityRoutes = require('./routes/community');
+const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/voice', voiceRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Stats endpoint for frontend
 app.get('/api/stats', async (req, res) => {

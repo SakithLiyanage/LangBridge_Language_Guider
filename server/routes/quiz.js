@@ -151,8 +151,8 @@ router.post('/submit', auth, async (req, res) => {
     const quiz = new Quiz({
       userId: req.user.id,
       quizId,
-      score,
-      totalQuestions,
+          score,
+          totalQuestions,
       difficulty,
       answers
     });
@@ -166,13 +166,13 @@ router.post('/submit', auth, async (req, res) => {
     // Update vocabulary mastery levels (optional - skip if no vocabulary words)
     if (answers && answers.length > 0) {
       console.log('Updating vocabulary mastery levels...');
-      for (const answer of answers) {
+    for (const answer of answers) {
         if (answer.correct && answer.word) {
           try {
-            await User.findOneAndUpdate(
+        await User.findOneAndUpdate(
               { _id: req.user.id, 'vocabulary.word': answer.word },
-              { $inc: { 'vocabulary.$.masteryLevel': 1 } }
-            );
+          { $inc: { 'vocabulary.$.masteryLevel': 1 } }
+        );
             console.log('Updated mastery for word:', answer.word);
           } catch (vocabError) {
             console.log('Vocabulary update failed (non-critical):', vocabError.message);

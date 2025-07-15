@@ -59,34 +59,59 @@ router.get('/', auth, async (req, res) => {
     
     // Calculate level based on XP
     progress.currentLevel = totalXP < 100 ? 'beginner' : totalXP < 500 ? 'intermediate' : 'advanced';
-    
-    // Calculate streak (count any activity)
+
+    // Robust streak logic with logging
     const today = new Date();
-    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const lastActivityDate = progress.lastActivityDate ? new Date(progress.lastActivityDate) : null;
+    if (lastActivityDate) lastActivityDate.setHours(0, 0, 0, 0);
+
+    // Check for activity today
     const recentActivity = await Promise.all([
-      Translation.findOne({ userId: req.user.id, timestamp: { $gte: yesterday } }),
-      Quiz.findOne({ userId: req.user.id, timestamp: { $gte: yesterday } }),
-      Flashcard.findOne({ userId: req.user.id, lastReviewed: { $gte: yesterday } }),
-      Post.findOne({ author: req.user.id, createdAt: { $gte: yesterday } }),
-      Resource.findOne({ author: req.user.id, createdAt: { $gte: yesterday } })
+      Translation.findOne({ userId: req.user.id, timestamp: { $gte: today } }),
+      Quiz.findOne({ userId: req.user.id, timestamp: { $gte: today } }),
+      Flashcard.findOne({ userId: req.user.id, lastReviewed: { $gte: today } }),
+      Post.findOne({ author: req.user.id, createdAt: { $gte: today } }),
+      Resource.findOne({ author: req.user.id, createdAt: { $gte: today } })
     ]);
-    // Check for replies in the last day
     let recentReply = false;
-    const recentPosts = await Post.find({ 'replies.author': req.user.id, 'replies.createdAt': { $gte: yesterday } });
+    const recentPosts = await Post.find({ 'replies.author': req.user.id, 'replies.createdAt': { $gte: today } });
     recentPosts.forEach(post => {
       if (Array.isArray(post.replies)) {
-        if (post.replies.some(r => r.author && r.author.toString() === req.user.id && r.createdAt >= yesterday)) {
+        if (post.replies.some(r => r.author && r.author.toString() === req.user.id && r.createdAt >= today)) {
           recentReply = true;
         }
       }
     });
-    const hasRecentActivity = recentActivity.some(activity => activity !== null) || recentReply;
-    const streakDays = hasRecentActivity ? (progress.streakDays || 0) + 1 : 0;
-    
-    // Update streak
-    if (hasRecentActivity && (!progress.lastActivityDate || progress.lastActivityDate < yesterday)) {
-      progress.streakDays = streakDays;
+    const hasActivityToday = recentActivity.some(activity => activity !== null) || recentReply;
+
+    // Log streak calculation details
+    console.log('Streak debug:', {
+      today,
+      yesterday,
+      lastActivityDate,
+      hasActivityToday,
+      prevStreak: progress.streakDays
+    });
+
+    // Streak logic
+    if (hasActivityToday) {
+      if (lastActivityDate && lastActivityDate.getTime() === yesterday.getTime()) {
+        // Continued streak
+        progress.streakDays = (progress.streakDays || 0) + 1;
+        console.log('Streak incremented to', progress.streakDays);
+      } else if (!lastActivityDate || lastActivityDate < yesterday) {
+        // Missed a day or first activity
+        progress.streakDays = 1;
+        console.log('Streak reset to 1');
+      } // else: already counted for today
       progress.lastActivityDate = today;
+    } else if (lastActivityDate && lastActivityDate < yesterday) {
+      // Missed a day, reset streak
+      progress.streakDays = 0;
+      console.log('Streak reset to 0');
     }
     
     // Course progress (simplified)
@@ -123,8 +148,8 @@ router.get('/', auth, async (req, res) => {
     if (quizzes.length >= 20) achievements.push({ name: 'Quiz Champion', earnedAt: new Date() });
     if (flashcards.length >= 10) achievements.push({ name: 'Flashcard Learner', earnedAt: new Date() });
     if (flashcards.length >= 50) achievements.push({ name: 'Flashcard Master', earnedAt: new Date() });
-    if (streakDays >= 7) achievements.push({ name: 'Week Warrior', earnedAt: new Date() });
-    if (streakDays >= 30) achievements.push({ name: 'Month Master', earnedAt: new Date() });
+    if (progress.streakDays >= 7) achievements.push({ name: 'Week Warrior', earnedAt: new Date() });
+    if (progress.streakDays >= 30) achievements.push({ name: 'Month Master', earnedAt: new Date() });
     progress.achievements = achievements;
     
     await progress.save();

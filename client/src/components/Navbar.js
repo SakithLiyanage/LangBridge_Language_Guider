@@ -31,7 +31,8 @@ const primaryNavItems = [
   { path: '/', label: 'Home', icon: Home, description: 'Dashboard overview' },
   { path: '/translate', label: 'Translate', icon: MessageCircle, description: 'AI translation tool' },
   { path: '/learn', label: 'Learn', icon: BookOpen, description: 'Interactive courses' },
-  { path: '/quiz', label: 'Quiz', icon: Award, description: 'Test your knowledge' }
+  { path: '/quiz', label: 'Quiz', icon: Award, description: 'Test your knowledge' },
+  { path: '/ai-tutor', label: 'AI Tutor', icon: MessageSquare, description: 'Chat with an AI tutor' }
 ];
 
 const learningNavItems = [
@@ -66,9 +67,9 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate('/');
-      setShowUserMenu(false);
+    await logout();
+    navigate('/');
+    setShowUserMenu(false);
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -215,7 +216,7 @@ const Navbar = () => {
                   subtitle="Connect with other learners"
                   items={communityNavItems}
                 />
-              </div>
+          </div>
             )}
 
             {/* Theme Toggle */}
@@ -238,11 +239,11 @@ const Navbar = () => {
                   className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200"
                 >
                   <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                    {user.username.charAt(0).toUpperCase()}
+                      {user.username.charAt(0).toUpperCase()}
                   </div>
                   <div className="hidden sm:block text-left">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {user.username}
+                    {user.username}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {user.currentLevel || 'Beginner'}
@@ -284,16 +285,16 @@ const Navbar = () => {
                       </Link>
                       
                       <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
-                        <button
-                          onClick={handleLogout}
+                      <button
+                        onClick={handleLogout}
                           className="flex items-center space-x-3 px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left text-red-600 dark:text-red-400"
-                        >
-                          <LogOut className="w-4 h-4" />
+                      >
+                        <LogOut className="w-4 h-4" />
                           <div>
                             <span className="text-sm font-medium">Sign Out</span>
                             <p className="text-xs text-gray-500 dark:text-gray-400">End your session</p>
                           </div>
-                        </button>
+                      </button>
                       </div>
                     </motion.div>
                   )}
@@ -354,16 +355,16 @@ const Navbar = () => {
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">Main</h3>
                 <div className="space-y-1">
                   {primaryNavItems.map((item) => {
-                    if (item.protected && !user) return null;
-                    return (
+                if (item.protected && !user) return null;
+                return (
                       <NavItem 
-                        key={item.path} 
+                    key={item.path}
                         item={item} 
-                        onClick={() => setIsOpen(false)}
+                      onClick={() => setIsOpen(false)}
                         className="w-full"
                       />
-                    );
-                  })}
+                );
+              })}
                 </div>
               </div>
 

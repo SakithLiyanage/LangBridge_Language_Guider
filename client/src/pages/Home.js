@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  Languages,
-  Mic,
-  BookOpen,
-  Award,
-  ArrowRight,
+import { 
+  Languages, 
+  Mic, 
+  BookOpen, 
+  Award, 
+  ArrowRight, 
   Sparkles,
   Users,
   TrendingUp,
@@ -136,7 +136,7 @@ const Home = () => {
       className="group relative overflow-hidden card-premium p-8 cursor-pointer"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl`} />
-
+      
       <div className="relative z-10">
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
@@ -146,7 +146,7 @@ const Home = () => {
         >
           <Icon className="w-8 h-8 text-white" />
         </motion.div>
-
+        
         <motion.h3
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -155,7 +155,7 @@ const Home = () => {
         >
           {title}
         </motion.h3>
-
+        
         <motion.p
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -165,7 +165,7 @@ const Home = () => {
           {description}
         </motion.p>
       </div>
-
+      
       <div className={`absolute inset-0 bg-gradient-to-r ${color} opacity-0 group-hover:opacity-10 blur-xl transition-all duration-500 rounded-2xl`} />
     </motion.div>
   );
@@ -186,28 +186,28 @@ const Home = () => {
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 drop-shadow-lg"
-          >
+                >
             Bridge Languages. <span className="text-gradient">Empower Minds.</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-8 max-w-2xl mx-auto"
-          >
+              >
             Learn Sinhala, English, and Tamil with AI-powered translation, interactive lessons, quizzes, and more.
-          </motion.p>
+              </motion.p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
             <AnimatedButton onClick={() => navigate('/register')} variant="primary" size="lg">
-              Get Started Free
-            </AnimatedButton>
+                  Get Started Free
+                </AnimatedButton>
             <Link to="/translate">
               <AnimatedButton variant="secondary" size="lg">
                 Try Translator <ArrowRight className="inline w-5 h-5 ml-2" />
-              </AnimatedButton>
+                </AnimatedButton>
             </Link>
           </div>
           <div className="flex flex-wrap justify-center gap-4 mt-6">
@@ -238,30 +238,30 @@ const Home = () => {
                   </div>
                 ))
               : stats.map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="text-center group"
-                  >
-                    <motion.div
-                      className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:shadow-2xl transition-all duration-300"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                    >
-                      <stat.icon className="w-8 h-8 text-white" />
-                    </motion.div>
-                    <motion.div
-                      className="text-4xl font-bold text-gradient mb-2"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      {stat.number}
-                    </motion.div>
-                    <div className="text-gray-600 dark:text-gray-400 font-medium">
-                      {stat.label}
-                    </div>
-                  </motion.div>
-                ))}
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="text-center group"
+              >
+                <motion.div 
+                  className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:shadow-2xl transition-all duration-300"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <stat.icon className="w-8 h-8 text-white" />
+                </motion.div>
+                <motion.div 
+                  className="text-4xl font-bold text-gradient mb-2"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  {stat.number}
+                </motion.div>
+                <div className="text-gray-600 dark:text-gray-400 font-medium">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -352,8 +352,8 @@ const Home = () => {
       <section className="py-20 bg-white/70 dark:bg-gray-800/70">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-bold mb-8 text-gradient"
           >
             Supported Languages
@@ -362,15 +362,15 @@ const Home = () => {
             <div className="flex flex-col items-center">
               <span className="text-6xl">🇱🇰</span>
               <span className="mt-2 text-lg font-semibold">Sinhala</span>
-            </div>
+                </div>
             <div className="flex flex-col items-center">
               <span className="text-6xl">🇬🇧</span>
               <span className="mt-2 text-lg font-semibold">English</span>
-            </div>
+                </div>
             <div className="flex flex-col items-center">
               <span className="text-6xl">🇮🇳</span>
               <span className="mt-2 text-lg font-semibold">Tamil</span>
-            </div>
+                </div>
           </div>
         </div>
       </section>
@@ -378,11 +378,11 @@ const Home = () => {
       {/* Testimonials Carousel */}
       <section className="py-20 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
-          >
+            >
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">What Our Users Say</h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">Real feedback from language learners and professionals</p>
           </motion.div>
@@ -409,7 +409,7 @@ const Home = () => {
           </Carousel>
         </div>
       </section>
-
+          
       {/* CTA SECTION */}
       {!user && (
         <section className="py-20 bg-gradient-to-br from-blue-600 to-purple-600 text-white text-center">
