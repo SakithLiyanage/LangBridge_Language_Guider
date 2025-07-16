@@ -144,7 +144,7 @@ const Quiz = () => {
               Vocabulary Quiz
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mb-8">
-              Test your knowledge with AI-generated vocabulary questions
+              Test your knowledge with vocabulary questions
             </p>
             
             <div className="mb-6">

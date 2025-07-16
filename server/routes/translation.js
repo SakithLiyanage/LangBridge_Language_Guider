@@ -123,6 +123,16 @@ router.get('/history', auth, async (req, res) => {
   }
 });
 
+// Delete all translation history for the current user
+router.delete('/history', auth, async (req, res) => {
+  try {
+    await require('../models/Translation').deleteMany({ userId: req.user.id });
+    res.json({ message: 'Translation history cleared' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to clear translation history', error: error.message });
+  }
+});
+
 // Speech synthesis endpoint using Google Translate TTS
 router.post('/speech', async (req, res) => {
   try {

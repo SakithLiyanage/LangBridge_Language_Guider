@@ -11,6 +11,7 @@ const History = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState('newest');
   const [filterDate, setFilterDate] = useState('all');
   const [vocabulary, setVocabulary] = useState([]);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -71,50 +72,72 @@ const History = () => {
     setSelectedQuiz(null);
   };
 
-  const filteredTranslations = translations.filter(translation => {
-    const matchesSearch = translation.originalText.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         translation.translatedText.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (filterDate === 'all') return matchesSearch;
-    
-    const translationDate = new Date(translation.timestamp);
-    const now = new Date();
-    
-    if (filterDate === 'today') {
-      return matchesSearch && translationDate.toDateString() === now.toDateString();
-    } else if (filterDate === 'week') {
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      return matchesSearch && translationDate >= weekAgo;
-    } else if (filterDate === 'month') {
-      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      return matchesSearch && translationDate >= monthAgo;
-    }
-    
-    return matchesSearch;
-  });
-
-  const filteredQuizzes = quizzes.filter(quiz => {
-    if (filterDate === 'all') return true;
-    
-    const quizDate = new Date(quiz.timestamp);
-    const now = new Date();
-    
-    if (filterDate === 'today') {
-      return quizDate.toDateString() === now.toDateString();
-    } else if (filterDate === 'week') {
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      return quizDate >= weekAgo;
-    } else if (filterDate === 'month') {
-      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      return quizDate >= monthAgo;
-    }
-    
-    return true;
-  });
+  // Enhanced filter and sort logic for translations
+  const filteredTranslations = translations
+    .filter(t => {
+      const matchesSearch = t.originalText?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.translatedText?.toLowerCase().includes(searchTerm.toLowerCase());
+      if (!matchesSearch) return false;
+      if (filterDate === 'all') return true;
+      const date = new Date(t.timestamp || t.createdAt);
+      const now = new Date();
+      if (filterDate === 'today') {
+        return date.toDateString() === now.toDateString();
+      } else if (filterDate === 'week') {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return date >= weekAgo;
+      } else if (filterDate === 'month') {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return date >= monthAgo;
+      }
+      return true;
+    })
+    .sort((a, b) => sortOrder === 'newest'
+      ? new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt)
+      : new Date(a.timestamp || a.createdAt) - new Date(b.timestamp || b.createdAt)
+    );
+  // Enhanced filter and sort logic for quizzes
+  const filteredQuizzes = quizzes
+    .filter(q => {
+      const matchesSearch = (q.answers || []).some(ans =>
+        ans.word?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ans.translation?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      if (!matchesSearch) return false;
+      if (filterDate === 'all') return true;
+      const date = new Date(q.timestamp || q.createdAt);
+      const now = new Date();
+      if (filterDate === 'today') {
+        return date.toDateString() === now.toDateString();
+      } else if (filterDate === 'week') {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return date >= weekAgo;
+      } else if (filterDate === 'month') {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return date >= monthAgo;
+      }
+      return true;
+    })
+    .sort((a, b) => sortOrder === 'newest'
+      ? new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt)
+      : new Date(a.timestamp || a.createdAt) - new Date(b.timestamp || b.createdAt)
+    );
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const clearHistory = async () => {
+    if (!window.confirm('Are you sure you want to clear your history? This cannot be undone.')) return;
+    try {
+      await apiClient.delete('/api/translation/history');
+      await apiClient.delete('/api/quiz/history');
+      fetchHistory();
+      toast.success('History cleared!');
+    } catch (error) {
+      toast.error('Failed to clear history');
+    }
   };
 
   if (loading) {
@@ -127,21 +150,38 @@ const History = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Learning History
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Track your translation and quiz progress
-          </p>
-        </motion.div>
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">History</h1>
+          <button onClick={clearHistory} className="btn-secondary">Clear History</button>
+        </div>
+        <div className="flex flex-wrap gap-4 mb-6 items-center">
+          <input
+            type="text"
+            className="input-field w-64"
+            placeholder="Search history..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+          <select
+            className="input-field w-40"
+            value={sortOrder}
+            onChange={e => setSortOrder(e.target.value)}
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+          <select
+            className="input-field w-40"
+            value={filterDate}
+            onChange={e => setFilterDate(e.target.value)}
+          >
+            <option value="all">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+          </select>
+        </div>
         {/* Tabs */}
         <div className="flex space-x-4 mb-6">
           <button
@@ -166,58 +206,6 @@ const History = () => {
             <Award size={20} />
             <span>Quizzes</span>
           </button>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <select
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">All Time</option>
-            <option value="today">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-          </select>
-        </div>
-
-        {/* Vocabulary List */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-            Vocabulary
-          </h3>
-          {vocabulary.length === 0 ? (
-            <div className="text-gray-500 dark:text-gray-400">No vocabulary saved yet.</div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              {vocabulary.map((v, idx) => (
-                <div key={idx} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <div>
-                    <div className="font-bold text-blue-700 dark:text-blue-300">{v.word}</div>
-                    <div className="text-green-700 dark:text-green-300">{v.translation}</div>
-                    <div className="text-xs text-gray-500">{v.language}</div>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteVocab(v.word, v.language)}
-                    className="text-red-500 hover:text-red-700 text-xs"
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Content */}

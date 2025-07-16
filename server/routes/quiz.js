@@ -221,6 +221,16 @@ router.get('/history', auth, async (req, res) => {
   }
 });
 
+// Delete all quiz history for the current user
+router.delete('/history', auth, async (req, res) => {
+  try {
+    await Quiz.deleteMany({ userId: req.user.id });
+    res.json({ message: 'Quiz history cleared' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to clear quiz history', error: error.message });
+  }
+});
+
 // Test endpoint to verify Quiz model is working
 router.get('/test', auth, async (req, res) => {
   try {
