@@ -105,7 +105,7 @@ const Progress = () => {
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
           <nav className="-mb-px flex space-x-8">
-            {['overview', 'achievements', 'leaderboard', 'skills'].map((tab) => (
+            {['overview', 'achievements', 'leaderboard'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -177,34 +177,6 @@ const Progress = () => {
               </div>
             </div>
 
-            {/* Course Progress */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Course Progress</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {Object.entries(progress.courseProgress || {}).map(([language, data]) => (
-                  <div key={language} className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                        {language}
-                      </span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {Math.round(data.overallProgress || 0)}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${data.overallProgress || 0}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {(data.completedLessons || []).length} lessons completed
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* Learning Goals */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Learning Goals</h3>
@@ -213,7 +185,7 @@ const Progress = () => {
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Daily Target</span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {progress.goals?.currentDailyProgress || 0}/{progress.goals?.dailyTarget || 30} min
+                      {progress.goals?.currentDailyProgress || 0}/{progress.goals?.dailyTarget || 30} points
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -222,6 +194,7 @@ const Progress = () => {
                       style={{ width: `${Math.min(100, ((progress.goals?.currentDailyProgress || 0) / (progress.goals?.dailyTarget || 30)) * 100)}%` }}
                     ></div>
                   </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Points are earned by completing activities.</p>
                 </div>
 
                 <div className="space-y-2">
@@ -332,37 +305,6 @@ const Progress = () => {
                   <div className="text-right">
                     <p className="font-semibold text-gray-900 dark:text-white">{user.xpPoints || 0} XP</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{(user.streakDays && user.streakDays > 0) ? user.streakDays : (user.lastActivityDate ? 1 : 0)} day streak</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Skills Tab */}
-        {activeTab === 'skills' && progress && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Skill Mastery</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Object.entries(progress.skills || {}).map(([skill, level]) => (
-                <div key={skill} className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                      {skill}
-                    </span>
-                    <span className={`text-sm font-semibold ${getSkillColor(level || 0)}`}>
-                      {level || 0}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div
-                      className={`h-3 rounded-full transition-all duration-300 ${
-                        (level || 0) >= 80 ? 'bg-green-600' :
-                        (level || 0) >= 60 ? 'bg-yellow-600' :
-                        (level || 0) >= 40 ? 'bg-orange-600' : 'bg-red-600'
-                      }`}
-                      style={{ width: `${level || 0}%` }}
-                    ></div>
                   </div>
                 </div>
               ))}

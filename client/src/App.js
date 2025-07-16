@@ -14,7 +14,6 @@ import Features from './pages/Features';
 import ProtectedRoute from './components/ProtectedRoute';
 import apiClient from './utils/axios';
 import About from './pages/About';
-import Learn from './pages/LearnSinhala';
 import Progress from './pages/Progress';
 import Flashcards from './pages/Flashcards';
 import Community from './pages/Community';
@@ -54,7 +53,6 @@ function App() {
                     </ProtectedRoute>
                   } />
                   <Route path="/about" element={<About />} />
-                  <Route path="/learn" element={<Learn />} />
                   <Route path="/translate" element={<Translate />} />
                   <Route path="/progress" element={
                     <ProtectedRoute>

@@ -31,7 +31,6 @@ import apiClient from '../utils/axios';
 const primaryNavItems = [
   { path: '/', label: 'Home', icon: Home, description: 'Dashboard overview' },
   { path: '/translate', label: 'Translate', icon: MessageCircle, description: 'AI translation tool' },
-  { path: '/learn', label: 'Learn', icon: BookOpen, description: 'Interactive courses' },
   { path: '/quiz', label: 'Quiz', icon: Award, description: 'Test your knowledge' },
   { path: '/ai-tutor', label: 'AI Tutor', icon: MessageSquare, description: 'Chat with an AI tutor' }
 ];

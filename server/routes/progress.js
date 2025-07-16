@@ -144,10 +144,10 @@ router.get('/', auth, async (req, res) => {
     progress.skills.listening = Math.min(100, (progress.skills.listening || 0) + quizzes.length);
     // Speaking: not tracked unless you add speaking activities
     
-    // Learning goals
+    // Change learning goals to use 'points' instead of 'minutes'
     progress.goals = {
-      dailyTarget: 30, // minutes
-      weeklyTarget: 210, // minutes
+      dailyTarget: 30, // points
+      weeklyTarget: 210, // points
       vocabularyTarget: 100, // words
       currentDailyProgress: Math.min(30, (translations.length + quizzes.length + flashcards.length + posts.length + replyCount + resources.length) * 2),
       currentWeeklyProgress: Math.min(210, (translations.length + quizzes.length + flashcards.length + posts.length + replyCount + resources.length) * 14),
