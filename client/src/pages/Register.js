@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, User, Loader2, UserPlus } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ export default function Register() {
   });
   const [isLoading, setIsLoading] = useState(false);
   
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -63,6 +64,34 @@ export default function Register() {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Create Account</h2>
           <p className="text-gray-600 dark:text-gray-400">Join LangBridge and start your language journey!</p>
         </div>
+        <div className="mb-4 flex flex-col gap-2">
+  <GoogleLogin
+    onSuccess={async (credentialResponse) => {
+      if (credentialResponse.credential) {
+        const result = await loginWithGoogle(credentialResponse.credential);
+        if (result.success) {
+          toast.success('Google login successful!');
+          navigate('/dashboard');
+        } else {
+          toast.error(result.error);
+        }
+      } else {
+        toast.error('Google login failed.');
+      }
+    }}
+    onError={() => toast.error('Google login failed.')}
+    width="100%"
+    size="large"
+    text="signup_with"
+    shape="pill"
+    theme="outline"
+  />
+  <div className="flex items-center gap-2">
+    <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+    <span className="text-xs text-gray-400">or</span>
+    <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+  </div>
+</div>
         <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>

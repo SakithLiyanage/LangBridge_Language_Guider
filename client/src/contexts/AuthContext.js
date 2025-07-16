@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import apiClient from '../utils/axios';
+import { googleLogout } from '@react-oauth/google';
 
 const AuthContext = createContext();
 
@@ -72,12 +73,29 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const loginWithGoogle = async (credential) => {
+    try {
+      const response = await apiClient.post('/api/auth/google', { credential });
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Google login failed'
+      };
+    }
+  };
+
   const value = {
     user,
     login,
     register,
     logout,
-    loading
+    loading,
+    loginWithGoogle
   };
 
   return (

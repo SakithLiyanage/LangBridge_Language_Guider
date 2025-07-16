@@ -16,8 +16,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: false, // Make optional for Google users
     minlength: 6
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true
   },
   nativeLanguage: {
     type: String,
@@ -82,8 +87,9 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 12);
+  if (this.password && this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
   next();
 });
 

@@ -201,9 +201,11 @@ const Home = () => {
             Learn Sinhala, English, and Tamil with AI-powered translation, interactive lessons, quizzes, and more.
               </motion.p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-            <AnimatedButton onClick={() => navigate('/register')} variant="primary" size="lg">
+            {!user && (
+              <AnimatedButton onClick={() => navigate('/register')} variant="primary" size="lg">
                   Get Started Free
                 </AnimatedButton>
+            )}
             <Link to="/translate">
               <AnimatedButton variant="secondary" size="lg">
                 Try Translator <ArrowRight className="inline w-5 h-5 ml-2" />
