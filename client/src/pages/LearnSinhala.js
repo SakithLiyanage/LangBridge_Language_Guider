@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2, CheckCircle, Mic, MicOff, ArrowRight, BookOpen, Star, ChevronRight } from 'lucide-react';
 import apiClient from '../utils/axios';
@@ -1290,6 +1290,21 @@ export default function Learn() {
   const [tamilActivityResult, setTamilActivityResult] = useState(null);
   const [tamilShowFeedback, setTamilShowFeedback] = useState(false);
 
+  const [progress, setProgress] = useState(null);
+
+  // Fetch progress on mount
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const response = await apiClient.get('/api/progress');
+        setProgress(response.data);
+      } catch (error) {
+        setProgress(null);
+      }
+    };
+    fetchProgress();
+  }, []);
+
   // English activity handlers
   const checkEngMatch = () => {
     const correct = englishActivities[0].pairs.every(
@@ -1418,6 +1433,9 @@ export default function Learn() {
         skill: 'reading',
         level: 25 // Increment skill level
       });
+      // Fetch latest progress after update
+      const response = await apiClient.get('/api/progress');
+      setProgress(response.data);
       toast.success(`Lesson completed! +${xpGained} XP`);
     } catch (error) {
       console.error('Failed to update progress:', error);

@@ -161,11 +161,11 @@ const Dashboard = () => {
             color="bg-yellow-100 dark:bg-yellow-900"
           />
           <StatCard
-            icon={<Book size={24} />}
-            title="Vocabulary"
-            value={stats.vocabularyCount}
-            color="bg-purple-100 dark:bg-purple-900"
-          />
+  icon={<Book size={24} />}
+  title="Vocabulary"
+  value={vocabulary.length}
+  color="bg-purple-100 dark:bg-purple-900"
+/>
           <StatCard
             icon={<Clock size={24} />}
             title="Total Correct Answers"
@@ -186,7 +186,7 @@ const Dashboard = () => {
                 <div className="text-sm text-gray-600 dark:text-gray-400">XP Points</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{progress.streakDays}</div>
+                <div className="text-2xl font-bold text-green-600">{(progress.streakDays && progress.streakDays > 0) ? progress.streakDays : (progress.lastActivityDate ? 1 : 0)}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Day Streak</div>
               </div>
               <div className="text-center">

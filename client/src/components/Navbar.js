@@ -25,6 +25,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import AnimatedButton from './AnimatedButton';
+import apiClient from '../utils/axios';
 
 // Organized navigation with logical grouping
 const primaryNavItems = [
@@ -54,6 +55,7 @@ const Navbar = () => {
   const [showCommunityMenu, setShowCommunityMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, logout } = useAuth();
+  const [progress, setProgress] = useState(null);
   const { isDark, toggleTheme } = useTheme();
 
   // Handle scroll effect
@@ -64,6 +66,18 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const response = await apiClient.get('/api/progress');
+        setProgress(response.data);
+      } catch (error) {
+        setProgress(null);
+      }
+    };
+    if (user) fetchProgress();
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -246,7 +260,9 @@ const Navbar = () => {
                     {user.username}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {user.currentLevel || 'Beginner'}
+                      {progress?.currentLevel
+                        ? progress.currentLevel.charAt(0).toUpperCase() + progress.currentLevel.slice(1)
+                        : 'Beginner'}
                     </p>
                   </div>
                 </motion.button>

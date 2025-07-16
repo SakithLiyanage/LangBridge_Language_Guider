@@ -228,15 +228,10 @@ router.post('/vocabulary', auth, async (req, res) => {
 // Get user vocabulary (auth required)
 router.get('/vocabulary', auth, async (req, res) => {
   try {
-    const userDoc = await User.findById(req.user.id);
-    if (!userDoc) {
-      console.error('User not found for userId:', req.user.id);
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.json({ vocabulary: userDoc.vocabulary });
+    const user = await User.findById(req.user.id);
+    res.json({ vocabulary: user.vocabulary || [] });
   } catch (error) {
-    console.error('Get vocabulary error:', error);
-    res.status(500).json({ message: error.message || 'Failed to get vocabulary' });
+    res.status(500).json({ message: 'Failed to fetch vocabulary', error: error.message });
   }
 });
 

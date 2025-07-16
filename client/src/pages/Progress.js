@@ -145,7 +145,7 @@ const Progress = () => {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Streak Days</p>
-                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">{progress.streakDays || 0}</p>
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">{(progress.streakDays && progress.streakDays > 0) ? progress.streakDays : (progress.lastActivityDate ? 1 : 0)}</p>
                   </div>
                 </div>
               </div>
@@ -331,7 +331,7 @@ const Progress = () => {
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-900 dark:text-white">{user.xpPoints || 0} XP</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{user.streakDays || 0} day streak</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{(user.streakDays && user.streakDays > 0) ? user.streakDays : (user.lastActivityDate ? 1 : 0)} day streak</p>
                   </div>
                 </div>
               ))}

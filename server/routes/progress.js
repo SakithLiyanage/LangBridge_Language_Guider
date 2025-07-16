@@ -114,21 +114,35 @@ router.get('/', auth, async (req, res) => {
       console.log('Streak reset to 0');
     }
     
-    // Course progress (simplified)
-    progress.courseProgress = {
-      sinhala: {
-        overallProgress: Math.min(100, (translations.filter(t => t.fromLang === 'sinhala' || t.toLang === 'sinhala').length / 10) * 100),
-        completedLessons: translations.filter(t => t.fromLang === 'sinhala' || t.toLang === 'sinhala').length
-      },
-      tamil: {
-        overallProgress: Math.min(100, (translations.filter(t => t.fromLang === 'tamil' || t.toLang === 'tamil').length / 10) * 100),
-        completedLessons: translations.filter(t => t.fromLang === 'tamil' || t.toLang === 'tamil').length
-      },
-      english: {
-        overallProgress: Math.min(100, (translations.filter(t => t.fromLang === 'english' || t.toLang === 'english').length / 10) * 100),
-        completedLessons: translations.filter(t => t.fromLang === 'english' || t.toLang === 'english').length
+    // Course progress (improved: use lessonCompleted if available, else fallback to translations)
+    if (!progress.courseProgress) progress.courseProgress = { sinhala: {}, tamil: {}, english: {} };
+    const languages = ['sinhala', 'tamil', 'english'];
+    languages.forEach(lang => {
+      // If we have real lesson IDs, use them
+      let completedLessons = progress.courseProgress[lang]?.completedLessons || [];
+      if (Array.isArray(completedLessons)) {
+        completedLessons = [...new Set(completedLessons)];
+      } else {
+        completedLessons = [];
       }
-    };
+      // Fallback: use translations as lessons if no real lessons
+      const translationLessons = translations.filter(t => t.fromLang === lang || t.toLang === lang).map(t => t._id.toString());
+      const allLessons = [...new Set([...completedLessons, ...translationLessons])];
+      progress.courseProgress[lang] = {
+        overallProgress: Math.min(100, (allLessons.length / 10) * 100),
+        completedLessons: allLessons
+      };
+    });
+
+    // Skill mastery: increment for more activity types
+    progress.skills = progress.skills || {};
+    // Reading: translations and quizzes
+    progress.skills.reading = Math.min(100, (progress.skills.reading || 0) + translations.length * 2 + quizzes.length * 2);
+    // Writing: translations
+    progress.skills.writing = Math.min(100, (progress.skills.writing || 0) + translations.length * 2);
+    // Listening: quizzes (if quiz has listening type, not implemented here)
+    progress.skills.listening = Math.min(100, (progress.skills.listening || 0) + quizzes.length);
+    // Speaking: not tracked unless you add speaking activities
     
     // Learning goals
     progress.goals = {
@@ -241,6 +255,7 @@ router.get('/leaderboard', async (req, res) => {
       username: userMap[p.userId.toString()] || 'User',
       xpPoints: p.xpPoints || 0,
       streakDays: p.streakDays || 0,
+      lastActivityDate: p.lastActivityDate, // Add this line
       achievements: Array.isArray(p.achievements) ? p.achievements.length : 0
     }));
     res.json(leaderboard);
