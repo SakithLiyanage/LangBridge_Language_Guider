@@ -113,7 +113,7 @@ router.post('/translate', auth, async (req, res) => {
   }
 });
 
-// POST /document: upload, extract, translate, summarize
+// POST /document: upload, extract, translate (no summarization)
 router.post('/document', auth, upload.single('file'), async (req, res) => {
   try {
     const { targetLang } = req.body;
@@ -156,36 +156,21 @@ router.post('/document', auth, upload.single('file'), async (req, res) => {
       }
     }
     translatedText = translatedText.trim();
-    // Summarize with OpenRouter (only if text is long enough)
-    let summary = '';
-    if (translatedText && translatedText.length > 10) {
-      try {
-        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-        const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-        const summaryPrompt = `Summarize the following text in a concise paragraph:\n\n${translatedText}`;
-        const summaryRes = await axios.post(OPENROUTER_API_URL, {
-          model: 'openrouter/auto',
-          messages: [
-            { role: 'system', content: 'You are a helpful language summarizer.' },
-            { role: 'user', content: summaryPrompt }
-          ]
-        }, {
-          headers: {
-            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        summary = summaryRes.data.choices[0].message.content;
-      } catch (e) {
-        console.error('OpenRouter summarization error:', e.response?.data || e.message);
-        summary = 'AI summarization failed. Please try again later or with a longer document.';
+    // Award XP for document translation
+    try {
+      let progress = await Progress.findOne({ userId: req.user.id });
+      if (!progress) {
+        progress = new Progress({ userId: req.user.id });
       }
-    } else {
-      summary = 'Not enough text to summarize.';
+      // Add XP for document translation (e.g., 10 XP per document)
+      progress.xpPoints = (progress.xpPoints || 0) + 10;
+      progress.currentLevel = progress.xpPoints < 100 ? 'beginner' : progress.xpPoints < 500 ? 'intermediate' : 'advanced';
+      progress.lastActivityDate = new Date();
+      await progress.save();
+    } catch (saveError) {
+      console.error('Error updating progress for document translation:', saveError);
     }
-    let warning = '';
-    if (truncated) warning = 'Document was too long. Only the first 50 sections were processed.';
-    res.json({ extractedText, translatedText, summary, warning });
+    res.json({ extractedText, translatedText });
   } catch (error) {
     console.error('Document translation error:', error);
     res.status(500).json({ message: 'Failed to process document', error: error.message });

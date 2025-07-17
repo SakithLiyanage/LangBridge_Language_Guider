@@ -1,113 +1,63 @@
-# Language Translator & Bilingual Learning Hub
+# LangBridge Language Translator
 
-A modern, full-stack web app for mastering Sinhala, English, and Tamil, powered by AI translation, interactive courses, quizzes, vocabulary management, audio, and cultural learning.
+A modern, full-stack web app for translating between Sinhala, English, and Tamil, with advanced features for language learners: instant translation, document translation, voice input, text-to-speech, vocabulary management, flashcards, quizzes, XP system, password reset, and community features.
 
 ## 🌟 Features
 
-### Comprehensive Multilingual Learning
-- **Full Interactive Syllabuses:**
-  - Complete, step-based courses for Sinhala, English, and Tamil
-  - Each language includes:
-    - Alphabet (letters, pronunciation, tracing)
-    - Basic Words & Phrases
-    - Basic Grammar
-    - Speaking Test (pronunciation practice)
-    - Interactive Activities (matching, fill-in-the-blank, drag-and-drop, listening)
-    - Advanced Vocabulary (with examples and activities)
-    - Conversation Practice (real dialogues, role-play)
-    - Reading Comprehension (passages, stories, questions)
-    - Writing Practice (guided prompts, examples, tips)
-    - Cultural Context (traditions, festivals, honorifics, idioms)
-    - Advanced Grammar (complex structures, passive, reported speech)
-    - Literature & Poetry (classical and modern works)
-- **Multi-language Support:**
-  - Seamless switching and learning for Sinhala, English, and Tamil
-  - All modules and activities are available for each language
+### Core Translation
+- **Instant Text Translation:**
+  - Translate between Sinhala, English, and Tamil instantly.
+  - Modern, responsive UI with dark mode support.
+- **Document Translation:**
+  - Upload PDF, DOCX, or TXT files and translate the entire document.
+  - Extracted and translated text are shown side-by-side.
+  - XP is awarded for document translations.
+- **Voice Input:**
+  - Speak your text and get instant translation using browser speech recognition.
+- **Text-to-Speech:**
+  - Listen to translations with high-quality audio output.
 
-### Core Learning & Translation
-- **Bilingual Learning Hub:**
-  - Interactive, visually aligned UI for all languages
-  - Modern, responsive design with clear progress indicators
-- **AI-Powered Translation:**
-  - Translate instantly between Sinhala, English, and Tamil
-  - Voice input and audio output for natural practice
-- **Vocabulary Management:**
-  - Save, review, and delete vocabulary
-  - Track your learning progress
-- **Quizzes & Examples:**
-  - AI-generated quizzes from your vocabulary
-  - Example sentences for real-life usage
-- **Audio & Speech Recognition:**
-  - Listen to correct pronunciation
-  - Practice speaking with browser-based speech recognition
-- **Cultural & Advanced Learning:**
-  - Idioms, honorifics, and cultural notes
-  - Advanced grammar and real-world language tips
+### Vocabulary & Learning Tools
+- **Vocabulary Builder:**
+  - Save, review, and delete vocabulary words.
+  - Track your vocabulary progress.
+- **Spaced Repetition Flashcards:**
+  - Smart review system for efficient vocabulary learning.
+  - Track mastery and review history.
+- **Quizzes:**
+  - AI-generated quizzes based on your vocabulary and history.
+  - Earn XP for quiz participation.
 
-### Gamification & Progress Tracking
-- **XP System & Achievements:**
-  - Earn experience points for completing lessons and activities
-  - Unlock badges and achievements for milestones
-  - Track learning streaks and daily goals
+### Progress & Gamification
+- **XP System:**
+  - Earn XP for translations, document uploads, quizzes, and flashcards.
+  - Track your progress and level up (beginner, intermediate, advanced).
+- **Achievements & Streaks:**
+  - Earn badges and maintain learning streaks.
 - **Progress Dashboard:**
-  - Visual progress tracking across all skills
-  - Skill mastery levels (speaking, listening, reading, writing)
-  - Personalized learning recommendations
-- **Leaderboards:**
-  - Compete with other learners
-  - View top performers and achievements
+  - Visualize your XP, streaks, and achievements.
+- **Leaderboard:**
+  - Compete with other users and see top performers.
 
-### Spaced Repetition Flashcards
-- **Smart Review System:**
-  - Spaced repetition algorithm for optimal learning
-  - Custom flashcard creation and management
-  - Import/export functionality for vocabulary
-- **Review Statistics:**
-  - Track mastery levels and review history
-  - Due cards focus for efficient learning
-  - Performance analytics and insights
-
-### Community & Social Features
+### Community
 - **Discussion Forums:**
-  - Ask questions and share knowledge
-  - Create and participate in discussions
-  - Search and filter topics by language/category
+  - Ask questions, share knowledge, and participate in discussions.
+  - Search and filter topics by language/category.
 - **User-Generated Content:**
-  - Create and share learning resources
-  - Rate and review community content
-  - Resource library with vocabulary, grammar, and exercises
-- **Trending Content:**
-  - Discover popular discussions and resources
-  - Real-time community activity feed
+  - Share and rate learning resources.
 
-### Advanced Learning Tools
-- **Personalized Learning Paths:**
-  - Adaptive recommendations based on progress
-  - Customizable learning preferences
-  - Goal setting and tracking
-- **Accessibility Features:**
-  - High contrast mode
-  - Screen reader support
-  - Responsive design for all devices
-
-## 📚 Course Structure Overview
-
-Each language (Sinhala, English, Tamil) includes:
-- **Alphabet**: Learn letters, sounds, and tracing
-- **Basic Words & Grammar**: Build foundational vocabulary and grammar
-- **Speaking & Listening**: Practice pronunciation and comprehension
-- **Interactive Activities**: Matching, fill-in-the-blank, drag-and-drop, listening
-- **Advanced Modules**: Vocabulary, conversation, reading, writing, culture, grammar, literature
-- **Cultural Context**: Learn about traditions, festivals, and real-world usage
-- **Progress Tracking**: Visual indicators and XP for every step
+### Account & Security
+- **Google Login:**
+  - Sign in/up with Google for quick access.
+- **Password Reset:**
+  - Secure email OTP-based password reset flow.
 
 ## 🚀 Tech Stack
 - **Frontend:** React, Tailwind CSS, Framer Motion, React Router
 - **Backend:** Node.js, Express, Mongoose
-- **Database:** MongoDB with Mongoose ODM
+- **Database:** MongoDB
 - **APIs:** Google Translate (unofficial), Google TTS, Web Speech API
-- **Authentication:** JWT with bcrypt password hashing
-- **Real-time Features:** WebSocket support for live updates
+- **Authentication:** JWT, bcrypt
 
 ## 🏁 Getting Started
 
@@ -121,7 +71,16 @@ Each language (Sinhala, English, Tamil) includes:
    cd client && npm install
    cd ../server && npm install
    ```
-3. **Start the development servers:**
+3. **Configure environment variables:**
+   - In `server/.env`, add:
+     ```
+     EMAIL_USER=your_email@gmail.com
+     EMAIL_PASS=your_email_password_or_app_password
+     JWT_SECRET=your_jwt_secret
+     MONGODB_URI=your_mongodb_connection_string
+     ```
+   - For Gmail, use an App Password if 2FA is enabled.
+4. **Start the development servers:**
    - **Backend:**
      ```bash
      cd server && npm start
@@ -130,29 +89,32 @@ Each language (Sinhala, English, Tamil) includes:
      ```bash
      cd client && npm start
      ```
-4. **Open your browser:**
+5. **Open your browser:**
    - Visit [http://localhost:3000](http://localhost:3000)
 
 ## 🧭 Usage
 
-### Getting Started
-- **Learn:** Go to the [Learn](/learn) page to start the Sinhala or English interactive course.
-- **Translate:** Use the home page or dashboard to translate between Sinhala, English, and Tamil.
-- **Quizzes:** Test your vocabulary and track your progress.
-- **Audio:** Listen to and practice pronunciation for every word and sentence.
+- **Translate Text:** Use the main translation interface to translate between Sinhala, English, and Tamil.
+- **Translate Documents:** Upload PDF, DOCX, or TXT files and translate the content. XP is awarded for each document translation.
+- **Voice Input:** Click the microphone icon to speak and translate.
+- **Text-to-Speech:** Click the speaker icon to listen to translations.
+- **Vocabulary:** Save words to your vocabulary list for review and flashcards.
+- **Flashcards:** Use the flashcards page for spaced repetition learning.
+- **Quizzes:** Take quizzes generated from your vocabulary and history.
+- **Progress:** View your XP, streaks, and achievements on the dashboard.
+- **Community:** Join discussions and share resources on the community page.
+- **Password Reset:** Use the "Forgot Password?" link on the login page for secure email OTP-based password reset.
 
-### New Features
-- **Progress Tracking:** Visit the [Progress](/progress) page to view your learning statistics, achievements, and leaderboard.
-- **Flashcards:** Use the [Flashcards](/flashcards) page for spaced repetition vocabulary learning.
-- **Community:** Join discussions and share resources on the [Community](/community) page.
-- **Dashboard:** View comprehensive stats and progress overview on your dashboard.
+## 🔒 Password Reset Email Setup
 
-### Learning Path
-1. **Start Learning:** Begin with the alphabet and basic vocabulary
-2. **Practice Regularly:** Use flashcards and quizzes to reinforce learning
-3. **Track Progress:** Monitor your XP, achievements, and skill levels
-4. **Engage with Community:** Share knowledge and learn from others
-5. **Set Goals:** Establish daily and weekly learning targets
+To enable password reset via email OTP, add the following to your `server/.env` file:
+
+```
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_email_password_or_app_password
+```
+- Use a Gmail account or another provider supported by nodemailer.
+- For Gmail, you may need to use an App Password if 2FA is enabled.
 
 ## 🤝 Contributing
 1. Fork the repo and create your branch: `git checkout -b feature/your-feature`
@@ -166,15 +128,3 @@ MIT
 ---
 
 **Made with ❤️ for language learners and educators.** 
-
-## Password Reset Email Setup
-
-To enable password reset via email OTP, add the following to your `server/.env` file:
-
-```
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_email_password_or_app_password
-```
-
-- Use a Gmail account or another provider supported by nodemailer.
-- For Gmail, you may need to use an App Password if 2FA is enabled. 
