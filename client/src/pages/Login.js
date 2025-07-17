@@ -5,11 +5,19 @@ import { Mail, Lock, Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import { GoogleLogin } from '@react-oauth/google';
+import Modal from '../components/Modal';
+import axios from '../utils/axios';
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotStep, setForgotStep] = useState(1); // 1: email, 2: otp, 3: new password
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOTP, setForgotOTP] = useState('');
+  const [forgotNewPassword, setForgotNewPassword] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   const { login, loginWithGoogle, user } = useAuth();
   const navigate = useNavigate();
@@ -35,6 +43,35 @@ export default function Login() {
       toast.error('Login failed. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Forgot password handlers
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    try {
+      if (forgotStep === 1) {
+        await axios.post('/api/auth/forgot-password', { email: forgotEmail });
+        toast.success('OTP sent to your email');
+        setForgotStep(2);
+      } else if (forgotStep === 2) {
+        await axios.post('/api/auth/verify-otp', { email: forgotEmail, otp: forgotOTP });
+        toast.success('OTP verified');
+        setForgotStep(3);
+      } else if (forgotStep === 3) {
+        await axios.post('/api/auth/reset-password', { email: forgotEmail, otp: forgotOTP, newPassword: forgotNewPassword });
+        toast.success('Password reset successful!');
+        setShowForgot(false);
+        setForgotStep(1);
+        setForgotEmail('');
+        setForgotOTP('');
+        setForgotNewPassword('');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Error');
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -74,7 +111,6 @@ export default function Login() {
               }
             }}
             onError={() => toast.error('Google login failed.')}
-            width="100%"
             size="large"
             text="signin_with"
             shape="pill"
@@ -133,6 +169,15 @@ export default function Login() {
               </button>
             </div>
           </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="text-xs text-blue-600 hover:underline focus:outline-none"
+              onClick={() => setShowForgot(true)}
+            >
+              Forgot Password?
+            </button>
+          </div>
           <button
             type="submit"
             disabled={isLoading}
@@ -150,6 +195,60 @@ export default function Login() {
             </p>
           </div>
         </form>
+        <Modal isOpen={showForgot} onClose={() => { setShowForgot(false); setForgotStep(1); setForgotEmail(''); setForgotOTP(''); setForgotNewPassword(''); }}>
+          <h3 className="text-lg font-bold mb-4 text-center">Reset Password</h3>
+          <form onSubmit={handleForgotSubmit} className="space-y-4">
+            {forgotStep === 1 && (
+              <div>
+                <label className="block text-sm font-medium mb-1">Email</label>
+                <input
+                  type="email"
+                  className="input-field w-full"
+                  value={forgotEmail}
+                  onChange={e => setForgotEmail(e.target.value)}
+                  required
+                  placeholder="Enter your email"
+                />
+                <button type="submit" className="btn-primary w-full mt-4" disabled={forgotLoading}>
+                  {forgotLoading ? 'Sending OTP...' : 'Send OTP'}
+                </button>
+              </div>
+            )}
+            {forgotStep === 2 && (
+              <div>
+                <label className="block text-sm font-medium mb-1">Enter OTP</label>
+                <input
+                  type="text"
+                  className="input-field w-full"
+                  value={forgotOTP}
+                  onChange={e => setForgotOTP(e.target.value)}
+                  required
+                  placeholder="Enter the OTP sent to your email"
+                />
+                <button type="submit" className="btn-primary w-full mt-4" disabled={forgotLoading}>
+                  {forgotLoading ? 'Verifying...' : 'Verify OTP'}
+                </button>
+              </div>
+            )}
+            {forgotStep === 3 && (
+              <div>
+                <label className="block text-sm font-medium mb-1">New Password</label>
+                <input
+                  type="password"
+                  className="input-field w-full"
+                  value={forgotNewPassword}
+                  onChange={e => setForgotNewPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="Enter new password"
+                />
+                <button type="submit" className="btn-primary w-full mt-4" disabled={forgotLoading}>
+                  {forgotLoading ? 'Resetting...' : 'Reset Password'}
+                </button>
+              </div>
+            )}
+          </form>
+        </Modal>
       </motion.div>
     </div>
   );

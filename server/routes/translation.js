@@ -5,8 +5,15 @@ const Translation = require('../models/Translation');
 const User = require('../models/User');
 const Progress = require('../models/Progress');
 const stream = require('stream');
+const multer = require('multer');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
+const fs = require('fs');
+const path = require('path');
 
 const router = express.Router();
+
+const upload = multer({ dest: 'uploads/' });
 
 const mapLangCode = (lang) => {
   if (lang === 'english') return 'en';
@@ -103,6 +110,85 @@ router.post('/translate', auth, async (req, res) => {
   } catch (error) {
     console.error('Translation error:', error);
     res.status(500).json({ message: error.message || 'Translation failed' });
+  }
+});
+
+// POST /document: upload, extract, translate, summarize
+router.post('/document', auth, upload.single('file'), async (req, res) => {
+  try {
+    const { targetLang } = req.body;
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    let extractedText = '';
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const filePath = req.file.path;
+    if (ext === '.pdf') {
+      const data = await pdfParse(fs.readFileSync(filePath));
+      extractedText = data.text;
+    } else if (ext === '.docx') {
+      const result = await mammoth.extractRawText({ path: filePath });
+      extractedText = result.value;
+    } else if (ext === '.txt') {
+      extractedText = fs.readFileSync(filePath, 'utf8');
+    } else {
+      fs.unlinkSync(filePath);
+      return res.status(400).json({ message: 'Unsupported file type' });
+    }
+    fs.unlinkSync(filePath);
+    if (!extractedText.trim()) return res.status(400).json({ message: 'No text found in document' });
+    // Split into paragraphs (by double newline or single newline)
+    let paragraphs = extractedText.split(/\n\s*\n|\r\n\s*\r\n|\n|\r\n/).filter(p => p.trim().length > 0);
+    let truncated = false;
+    if (paragraphs.length > 50) {
+      paragraphs = paragraphs.slice(0, 50);
+      truncated = true;
+    }
+    let translatedText = '';
+    for (const para of paragraphs) {
+      try {
+        const translationRes = await axios.post(`${req.protocol}://${req.get('host')}/api/translation/translate`, {
+          text: para,
+          from: 'auto',
+          to: targetLang
+        }, { headers: { Authorization: req.headers.authorization } });
+        translatedText += translationRes.data.translatedText + '\n';
+      } catch (err) {
+        translatedText += '[Translation failed for this section]\n';
+      }
+    }
+    translatedText = translatedText.trim();
+    // Summarize with OpenRouter (only if text is long enough)
+    let summary = '';
+    if (translatedText && translatedText.length > 10) {
+      try {
+        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+        const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+        const summaryPrompt = `Summarize the following text in a concise paragraph:\n\n${translatedText}`;
+        const summaryRes = await axios.post(OPENROUTER_API_URL, {
+          model: 'openrouter/auto',
+          messages: [
+            { role: 'system', content: 'You are a helpful language summarizer.' },
+            { role: 'user', content: summaryPrompt }
+          ]
+        }, {
+          headers: {
+            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        summary = summaryRes.data.choices[0].message.content;
+      } catch (e) {
+        console.error('OpenRouter summarization error:', e.response?.data || e.message);
+        summary = 'AI summarization failed. Please try again later or with a longer document.';
+      }
+    } else {
+      summary = 'Not enough text to summarize.';
+    }
+    let warning = '';
+    if (truncated) warning = 'Document was too long. Only the first 50 sections were processed.';
+    res.json({ extractedText, translatedText, summary, warning });
+  } catch (error) {
+    console.error('Document translation error:', error);
+    res.status(500).json({ message: 'Failed to process document', error: error.message });
   }
 });
 

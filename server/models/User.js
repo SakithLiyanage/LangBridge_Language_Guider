@@ -81,7 +81,14 @@ const userSchema = new mongoose.Schema({
     language: String,
     difficulty: { type: String, enum: ['easy', 'medium', 'hard'], default: 'medium' },
     masteryLevel: { type: Number, default: 0 }
-  }]
+  }],
+  // Password reset fields
+  resetPasswordOTP: {
+    type: String
+  },
+  resetPasswordOTPExpires: {
+    type: Date
+  }
 }, {
   timestamps: true
 });

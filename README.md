@@ -166,3 +166,15 @@ MIT
 ---
 
 **Made with ❤️ for language learners and educators.** 
+
+## Password Reset Email Setup
+
+To enable password reset via email OTP, add the following to your `server/.env` file:
+
+```
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_email_password_or_app_password
+```
+
+- Use a Gmail account or another provider supported by nodemailer.
+- For Gmail, you may need to use an App Password if 2FA is enabled. 
