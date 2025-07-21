@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Languages, Award, Clock, TrendingUp, Book } from 'lucide-react';
+import { User, Languages, Award, Clock, TrendingUp, Book, Star, ThumbsUp } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import TranslationInterface from '../components/TranslationInterface';
 import axios from 'axios';
@@ -20,11 +20,13 @@ const Dashboard = () => {
   const [recentQuizzes, setRecentQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [vocabulary, setVocabulary] = useState([]);
+  const [positiveFeedbacks, setPositiveFeedbacks] = useState([]);
 
   useEffect(() => {
     fetchDashboardData();
     fetchVocabulary();
     fetchProgress();
+    fetchPositiveFeedbacks();
   }, []);
 
   const fetchDashboardData = async () => {
@@ -85,6 +87,15 @@ const Dashboard = () => {
       setProgress(response.data);
     } catch (error) {
       console.error('Failed to fetch progress:', error);
+    }
+  };
+
+  const fetchPositiveFeedbacks = async () => {
+    try {
+      const res = await apiClient.get('/api/translation/feedback/positive');
+      setPositiveFeedbacks(res.data || []);
+    } catch (error) {
+      setPositiveFeedbacks([]);
     }
   };
 
@@ -173,6 +184,41 @@ const Dashboard = () => {
             color="bg-pink-100 dark:bg-pink-900"
           />
         </div>
+
+        {/* Positive Feedback Section */}
+        {positiveFeedbacks.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <ThumbsUp className="mr-2 text-green-500" size={20} />
+              What Our Users Say
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {positiveFeedbacks.map((fb, idx) => (
+                <div key={idx} className="flex flex-col gap-2 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow">
+                  <div className="flex items-center gap-2 mb-1">
+                    {fb.feedback.rating && (
+                      <span className="flex items-center gap-1">
+                        {[...Array(fb.feedback.rating)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 text-yellow-400" />
+                        ))}
+                      </span>
+                    )}
+                    {fb.feedback.positive && (
+                      <ThumbsUp className="w-4 h-4 text-green-500" />
+                    )}
+                  </div>
+                  <div className="text-gray-800 dark:text-gray-100 text-base">{fb.feedback.comment}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <span className="font-semibold">Original:</span> {fb.originalText}
+                  </div>
+                  <div className="text-xs text-blue-600 dark:text-blue-300">
+                    <span className="font-semibold">Translated:</span> {fb.translatedText}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Progress Overview */}
         {progress && (

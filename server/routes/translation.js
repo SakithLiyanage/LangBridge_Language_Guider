@@ -233,14 +233,53 @@ router.post('/speech', async (req, res) => {
   }
 });
 
-// Generate examples endpoint using Google Translate
+// Generate examples endpoint using OpenRouter AI
 router.post('/examples', async (req, res) => {
   try {
     const { text, lang } = req.body;
     if (!text || !lang) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    // More practical, real-life usage templates
+    // Use OpenRouter API to generate examples
+    const prompt = `Generate 3 practical, real-life example sentences using the word or phrase "${text}" in ${lang}. Return only the sentences, separated by \n.`;
+    try {
+      console.log('[OpenRouter] Sending prompt:', prompt);
+      const openRouterRes = await axios.post(
+        'https://openrouter.ai/api/v1/chat/completions',
+        {
+          model: 'openrouter/auto',
+          messages: [
+            { role: 'system', content: 'You are a helpful language tutor.' },
+            { role: 'user', content: prompt }
+          ],
+          max_tokens: 256 // Limit tokens for free-tier compatibility
+        },
+        {
+          headers: {
+            'Authorization': 'Bearer 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',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log('[OpenRouter] Response:', openRouterRes.data);
+      const aiText = openRouterRes.data.choices?.[0]?.message?.content || '';
+      const sentences = aiText.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 3);
+      const targetLang = lang === 'english' ? 'sinhala' : 'english';
+      const examples = await Promise.all(sentences.map(async (sentence) => {
+        const translation = await translateText(sentence, lang, targetLang);
+        return { original: sentence, translation };
+      }));
+      return res.json({ examples, ai: true });
+    } catch (aiErr) {
+      console.error('[OpenRouter AI error]', aiErr?.response?.data || aiErr.message, aiErr);
+      // Return error to frontend for debugging
+      return res.status(502).json({
+        message: 'OpenRouter AI error',
+        error: aiErr?.response?.data || aiErr.message || aiErr,
+        fallback: true
+      });
+    }
+    // Fallback: More practical, real-life usage templates
     const usageTemplates = [
       `I need to ${text} every day.`,
       `Could you please ${text} for me?`,
@@ -334,6 +373,51 @@ router.delete('/vocabulary', auth, async (req, res) => {
   } catch (error) {
     console.error('Delete vocabulary error:', error);
     res.status(500).json({ message: error.message || 'Failed to delete vocabulary' });
+  }
+});
+
+// Submit feedback for a translation
+router.post('/feedback', auth, async (req, res) => {
+  try {
+    const { translationId, rating, positive, comment } = req.body;
+    if (!translationId || (!rating && typeof positive !== 'boolean')) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const feedback = {
+      rating,
+      positive,
+      comment,
+      feedbackAt: new Date()
+    };
+    const updated = await Translation.findOneAndUpdate(
+      { _id: translationId, userId: req.user.id },
+      { $set: { feedback } },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ message: 'Translation not found' });
+    res.json({ message: 'Feedback submitted', feedback: updated.feedback });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to submit feedback', error: error.message });
+  }
+});
+
+// Get recent positive feedbacks for dashboard display
+router.get('/feedback/positive', async (req, res) => {
+  try {
+    // Find translations with positive feedback or high rating, and a comment
+    const feedbacks = await Translation.find({
+      $or: [
+        { 'feedback.positive': true },
+        { 'feedback.rating': { $gte: 4 } }
+      ],
+      'feedback.comment': { $exists: true, $ne: '' }
+    })
+      .sort({ 'feedback.feedbackAt': -1 })
+      .limit(10)
+      .select('feedback translatedText originalText fromLang toLang');
+    res.json(feedbacks);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch feedbacks', error: error.message });
   }
 });
 
