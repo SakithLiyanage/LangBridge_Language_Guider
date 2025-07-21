@@ -3,6 +3,7 @@ const axios = require('axios');
 const router = express.Router();
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+console.log('Loaded OpenRouter API Key:', OPENROUTER_API_KEY); // Debug print
 
 // POST /api/chatbot/chat
 router.post('/chat', async (req, res) => {
@@ -29,6 +30,10 @@ router.post('/chat', async (req, res) => {
         timeout: 30000
       }
     );
+    console.log('OpenRouter request headers:', {
+      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json'
+    }); // Debug print
     const reply = response.data.choices?.[0]?.message?.content || 'Sorry, I could not generate a reply.';
     res.json({ reply });
   } catch (err) {
