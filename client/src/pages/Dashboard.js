@@ -161,11 +161,11 @@ const Dashboard = () => {
             color="bg-yellow-100 dark:bg-yellow-900"
           />
           <StatCard
-  icon={<Book size={24} />}
-  title="Vocabulary"
+            icon={<Book size={24} />}
+            title="Vocabulary"
   value={vocabulary.length}
-  color="bg-purple-100 dark:bg-purple-900"
-/>
+            color="bg-purple-100 dark:bg-purple-900"
+          />
           <StatCard
             icon={<Clock size={24} />}
             title="Total Correct Answers"

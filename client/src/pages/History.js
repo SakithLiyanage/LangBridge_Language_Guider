@@ -80,14 +80,14 @@ const History = () => {
       if (!matchesSearch) return false;
       if (filterDate === 'all') return true;
       const date = new Date(t.timestamp || t.createdAt);
-      const now = new Date();
-      if (filterDate === 'today') {
+    const now = new Date();
+    if (filterDate === 'today') {
         return date.toDateString() === now.toDateString();
-      } else if (filterDate === 'week') {
-        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    } else if (filterDate === 'week') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         return date >= weekAgo;
-      } else if (filterDate === 'month') {
-        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    } else if (filterDate === 'month') {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         return date >= monthAgo;
       }
       return true;
@@ -104,19 +104,19 @@ const History = () => {
         ans.translation?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       if (!matchesSearch) return false;
-      if (filterDate === 'all') return true;
+    if (filterDate === 'all') return true;
       const date = new Date(q.timestamp || q.createdAt);
-      const now = new Date();
-      if (filterDate === 'today') {
+    const now = new Date();
+    if (filterDate === 'today') {
         return date.toDateString() === now.toDateString();
-      } else if (filterDate === 'week') {
-        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    } else if (filterDate === 'week') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         return date >= weekAgo;
-      } else if (filterDate === 'month') {
-        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    } else if (filterDate === 'month') {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         return date >= monthAgo;
-      }
-      return true;
+    }
+    return true;
     })
     .sort((a, b) => sortOrder === 'newest'
       ? new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt)

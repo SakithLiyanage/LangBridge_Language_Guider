@@ -91,7 +91,7 @@ export default function Register() {
     <span className="text-xs text-gray-400">or</span>
     <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
   </div>
-</div>
+        </div>
         <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>

@@ -12,7 +12,8 @@ import {
   Loader2,
   Check,
   AlertCircle,
-  PlusCircle
+  PlusCircle,
+  Share2, ThumbsUp, ThumbsDown, Star
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -448,7 +449,6 @@ const TranslationInterface = () => {
                 )}
               </div>
             </div>
-            
             {/* Translation Controls */}
             <div className="flex items-center gap-2 mt-2">
               <AnimatedButton
@@ -460,7 +460,6 @@ const TranslationInterface = () => {
               >
                 <Volume2 className="w-5 h-5" />
               </AnimatedButton>
-              
               <button
                 onClick={() => handleCopy(translatedText)}
                 disabled={!translatedText.trim()}
@@ -473,7 +472,78 @@ const TranslationInterface = () => {
                 )}
                 <span>{copied ? 'Copied!' : 'Copy'}</span>
               </button>
+              {/* Share Button */}
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: 'AI Translation',
+                      text: `"${sourceText}" → "${translatedText}"`,
+                      url: window.location.href
+                    }).then(() => toast.success('Shared!')).catch(() => {});
+                  } else {
+                    toast('Use the links below to share!', { icon: '🔗' });
+                  }
+                }}
+                disabled={!translatedText.trim()}
+                className="btn-secondary disabled:opacity-50 flex items-center space-x-2"
+                title="Share translation"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>Share</span>
+              </button>
             </div>
+            {/* Fallback Share Links */}
+            {translatedText && !navigator.share && (
+              <div className="flex items-center gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <a
+                  href={`mailto:?subject=AI Translation&body=${encodeURIComponent('"' + sourceText + '" → "' + translatedText + '"')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  Email
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('AI Translation: "' + sourceText + '" → "' + translatedText + '"')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  Twitter
+                </a>
+              </div>
+            )}
+            {/* Feedback/Rating Controls */}
+            {translatedText && (
+              <div className="flex items-center gap-3 mt-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Rate this translation:</span>
+                {[1,2,3,4,5].map(star => (
+                  <button
+                    key={star}
+                    onClick={() => toast.success(`You rated this translation ${star} star${star > 1 ? 's' : ''}!`)}
+                    className="focus:outline-none"
+                    title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                  >
+                    <Star className="w-5 h-5" style={{ color: '#fbbf24' }} />
+                  </button>
+                ))}
+                <button
+                  onClick={() => toast.success('You gave positive feedback!')}
+                  className="ml-2 focus:outline-none"
+                  title="Thumbs up"
+                >
+                  <ThumbsUp className="w-5 h-5 text-green-500" />
+                </button>
+                <button
+                  onClick={() => toast('You gave negative feedback.', { icon: '👎' })}
+                  className="focus:outline-none"
+                  title="Thumbs down"
+                >
+                  <ThumbsDown className="w-5 h-5 text-red-500" />
+                </button>
+              </div>
+            )}
           </motion.div>
         </div>
 
