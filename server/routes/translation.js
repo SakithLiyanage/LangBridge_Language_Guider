@@ -13,7 +13,8 @@ const path = require('path');
 
 const router = express.Router();
 
-const upload = multer({ dest: 'uploads/' });
+// Use memory storage for serverless environments
+const upload = multer({ storage: multer.memoryStorage() });
 
 const mapLangCode = (lang) => {
   if (lang === 'english') return 'en';
@@ -118,23 +119,25 @@ router.post('/document', auth, upload.single('file'), async (req, res) => {
   try {
     const { targetLang } = req.body;
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    
     let extractedText = '';
     const ext = path.extname(req.file.originalname).toLowerCase();
-    const filePath = req.file.path;
+    
+    // Handle file from memory storage instead of disk
     if (ext === '.pdf') {
-      const data = await pdfParse(fs.readFileSync(filePath));
+      const data = await pdfParse(req.file.buffer);
       extractedText = data.text;
     } else if (ext === '.docx') {
-      const result = await mammoth.extractRawText({ path: filePath });
+      const result = await mammoth.extractRawText({ buffer: req.file.buffer });
       extractedText = result.value;
     } else if (ext === '.txt') {
-      extractedText = fs.readFileSync(filePath, 'utf8');
+      extractedText = req.file.buffer.toString('utf8');
     } else {
-      fs.unlinkSync(filePath);
       return res.status(400).json({ message: 'Unsupported file type' });
     }
-    fs.unlinkSync(filePath);
+    
     if (!extractedText.trim()) return res.status(400).json({ message: 'No text found in document' });
+    
     // Split into paragraphs (by double newline or single newline)
     let paragraphs = extractedText.split(/\n\s*\n|\r\n\s*\r\n|\n|\r\n/).filter(p => p.trim().length > 0);
     let truncated = false;
@@ -142,6 +145,7 @@ router.post('/document', auth, upload.single('file'), async (req, res) => {
       paragraphs = paragraphs.slice(0, 50);
       truncated = true;
     }
+    
     let translatedText = '';
     for (const para of paragraphs) {
       try {
@@ -156,6 +160,7 @@ router.post('/document', auth, upload.single('file'), async (req, res) => {
       }
     }
     translatedText = translatedText.trim();
+    
     // Award XP for document translation
     try {
       let progress = await Progress.findOne({ userId: req.user.id });
@@ -170,6 +175,7 @@ router.post('/document', auth, upload.single('file'), async (req, res) => {
     } catch (saveError) {
       console.error('Error updating progress for document translation:', saveError);
     }
+    
     res.json({ extractedText, translatedText });
   } catch (error) {
     console.error('Document translation error:', error);
