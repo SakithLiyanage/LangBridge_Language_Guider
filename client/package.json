@@ -49,5 +49,5 @@
     "postcss": "^8.4.24",
     "tailwindcss": "^3.3.0"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "https://lang-bridge-language-translator-bac.vercel.app/"
 }
