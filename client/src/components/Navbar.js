@@ -229,7 +229,7 @@ const Navbar = () => {
                   subtitle="Connect with other learners"
                   items={communityNavItems}
                 />
-          </div>
+              </div>
             )}
 
             {/* Theme Toggle */}
@@ -332,26 +332,26 @@ const Navbar = () => {
                 </AnimatedButton>
               </div>
             )}
-
-            {/* Mobile Menu Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
-            >
-              <motion.div
-                animate={{ rotate: isOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isOpen ? (
-                  <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                ) : (
-                  <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                )}
-              </motion.div>
-            </motion.button>
           </div>
+
+          {/* Mobile Menu Button - Moved outside desktop navigation */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsOpen(!isOpen)}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <motion.div
+              animate={{ rotate: isOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {isOpen ? (
+                <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              ) : (
+                <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              )}
+            </motion.div>
+          </motion.button>
         </div>
       </div>
 
