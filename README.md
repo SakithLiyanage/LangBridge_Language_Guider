@@ -1,5 +1,7 @@
 # LangBridge Language Translator
 
+<img width="5000" height="2500" alt="langbridge" src="https://github.com/user-attachments/assets/5b58385c-ef61-4c73-886e-fafd4a2a2b9a" />
+
 A modern, full-stack web app for translating between Sinhala, English, and Tamil, with advanced features for language learners: instant translation, document translation, voice input, text-to-speech, vocabulary management, flashcards, quizzes, XP system, password reset, AI examples, feedback system, and community features.
 
 ## 🌟 Features
