@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://lang-bridge-language-translator-bac.vercel.app/',
+  baseURL: process.env.REACT_APP_API_URL || 'https://lang-bridge-language-translator-bac.vercel.app',
   timeout: 30000,
 });
 

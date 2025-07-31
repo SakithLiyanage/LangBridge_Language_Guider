@@ -19,6 +19,14 @@ const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 
+// Check required environment variables
+const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingVars.length > 0) {
+  console.error('Missing required environment variables:', missingVars);
+  console.log('Please set these variables in your Vercel environment');
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -30,7 +38,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/langbridg
   useUnifiedTopology: true,
 })
 .then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+.catch(err => {
+  console.error('MongoDB connection error:', err);
+  console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -62,7 +73,16 @@ app.get('/api/stats', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.json({ message: 'LangBridge API is running!' });
+  res.json({ 
+    message: 'LangBridge API is running!',
+    timestamp: new Date().toISOString(),
+    env: {
+      mongodb: process.env.MONGODB_URI ? 'Configured' : 'Missing',
+      jwt: process.env.JWT_SECRET ? 'Configured' : 'Missing',
+      email: process.env.EMAIL_USER ? 'Configured' : 'Missing',
+      openrouter: process.env.OPENROUTER_API_KEY ? 'Configured' : 'Missing'
+    }
+  });
 });
 
 const PORT = process.env.PORT || 5000;

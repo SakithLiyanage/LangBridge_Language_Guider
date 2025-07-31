@@ -4,6 +4,15 @@ A modern, full-stack web app for translating between Sinhala, English, and Tamil
 
 ## 🌟 Features
 
+## 🚀 Live Demo
+
+Visit the live application at: [LangBridge Language Translator](https://langbridge-language-translator.vercel.app/)
+
+**Note:** Some features may experience intermittent issues due to Vercel deployment constraints:
+- Google OAuth login requires domain authorization in Google Cloud Console
+- Serverless function timeouts may affect document translation for large files
+- Voice features may have limited functionality in serverless environment
+
 ### Core Translation
 - **Instant Text Translation:**
   - Translate between Sinhala, English, and Tamil instantly.
